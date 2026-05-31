@@ -41,6 +41,8 @@ PROJECT_APPS = [
     "apps.places.apps.PlacesConfig",
     "apps.events.apps.EventsConfig",
     "apps.info.apps.InfoConfig",
+    "apps.translator.apps.TranslatorConfig",
+    "apps.weather.apps.WeatherConfig",
     "apps.abstracts.apps.AbstractsConfig",
 ]
 

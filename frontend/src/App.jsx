@@ -5,6 +5,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import PrivateRoute from './components/PrivateRoute'
 import Info from './pages/Info'
+import Translator from './pages/Translator'
+import Weather from './pages/Weather'
 import Souvenirs from './pages/Souvenirs'
 import Apps from './pages/Apps'
 import EmergencyNumbers from './pages/EmergencyNumbers'
@@ -33,6 +35,8 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/info" element={<PrivateRoute><Info /></PrivateRoute>} />
+                    <Route path="/translator" element={<PrivateRoute><Translator /></PrivateRoute>} />
+                    <Route path="/weather" element={<PrivateRoute><Weather /></PrivateRoute>} />
                     <Route path="/souvenirs" element={<PrivateRoute><Souvenirs /></PrivateRoute>} />
                     <Route path="/apps" element={<PrivateRoute><Apps /></PrivateRoute>} />
                     <Route path="/emergency" element={<PrivateRoute><EmergencyNumbers /></PrivateRoute>} />

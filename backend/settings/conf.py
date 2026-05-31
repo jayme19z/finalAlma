@@ -101,6 +101,10 @@ SPECTACULAR_SETTINGS = {
             'name': 'Translator',
             'description': 'Translate short text via Google Cloud Translation API.',
         },
+        {
+            'name': 'Weather',
+            'description': 'Daily weather forecast for Almaty via Open-Meteo.',
+        },
     ],
 
     # ---- Enum naming ----

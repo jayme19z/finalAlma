@@ -45,6 +45,8 @@ urlpatterns = [
     path('api/v1/places/', include('apps.places.urls')),
     path('api/v1/events/', include('apps.events.urls')),
     path('api/v1/info/', include('apps.info.urls')),
+    path('api/v1/translator/', include('apps.translator.urls')), 
+    path('api/v1/weather/', include('apps.weather.urls')),
     path('api/v1/users/', include('apps.users.urls')),
 ]
 

@@ -60,6 +60,8 @@ export default function Navbar() {
                 {user && (
                     <div className="nav-links">
                         <Link to="/info" className={isActive('/info')}>{t.nav.info}</Link>
+                        <Link to="/translator" className={isActive('/translator')}>{t.info.translator.title}</Link>
+                        <Link to="/weather" className={isActive('/weather')}>{t.info.weather.title}</Link>
                         <Link to="/places" className={isActive('/places')}>{t.nav.places}</Link>
                         <Link to="/events" className={isActive('/events')}>{t.nav.events}</Link>
                         <Link to="/calendar" className={isActive('/calendar')}>{t.nav.calendar}</Link>
@@ -123,6 +125,8 @@ export default function Navbar() {
                     {user && (
                         <div className="mobile-nav-links">
                             <Link to="/info" className={isActive('/info')}>{t.nav.info}</Link>
+                            <Link to="/translator" className={isActive('/translator')}>{t.info.translator.title}</Link>
+                            <Link to="/weather" className={isActive('/weather')}>{t.info.weather.title}</Link>
                             <Link to="/places" className={isActive('/places')}>{t.nav.places}</Link>
                             <Link to="/events" className={isActive('/events')}>{t.nav.events}</Link>
                             <Link to="/calendar" className={isActive('/calendar')}>{t.nav.calendar}</Link>
