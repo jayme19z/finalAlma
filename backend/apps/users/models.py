@@ -22,3 +22,9 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.email
+
+    is_pro = models.BooleanField(
+        default=False,
+        verbose_name='Pro plan',
+        help_text='Designates whether this user has an active Pro subscription.',
+    )

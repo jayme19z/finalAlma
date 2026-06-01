@@ -42,8 +42,14 @@ export function AuthProvider({ children }) {
         setUser(null)
     }
 
+    const refreshUser = async () => {
+        const profile = await getProfile()
+        setUser(profile.data)
+        return profile.data
+    }
+
     return (
-        <AuthContext.Provider value={{ user, loading, loginUser, registerUser, logout }}>
+        <AuthContext.Provider value={{ user, loading, loginUser, registerUser, logout, refreshUser }}>
             {children}
         </AuthContext.Provider>
     )

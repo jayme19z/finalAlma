@@ -63,5 +63,6 @@ export const login = (data) => axios.post(`${API_BASE}/users/token/`, data)
 export const register = (data) => axios.post(`${API_BASE}/users/register/`, data)
 export const getProfile = () => client.get('/users/profile/')
 export const updateProfile = (data) => client.patch('/users/profile/', data)
+export const subscribePro = (data) => client.post('/users/subscribe/', data)
 
 export default client

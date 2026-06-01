@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
 )
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
-from apps.users.views import RegisterView, ProfileView
+from apps.users.views import RegisterView, ProfileView, SubscribeView
 
 
 # Wrap SimpleJWT views with schema annotations so they appear under
@@ -54,6 +54,7 @@ DecoratedTokenRefreshView = extend_schema(
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('subscribe/', SubscribeView.as_view(), name='subscribe'),
     path('token/', DecoratedTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', DecoratedTokenRefreshView.as_view(), name='token_refresh'),
 ]
