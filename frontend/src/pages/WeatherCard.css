@@ -84,7 +84,10 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     transition: all var(--transition);
-    cursor: default;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    text-align: center;
 }
 
 
@@ -97,14 +100,20 @@
 }
 
 /* ---- Today highlight ---- */
+/* ---- Today (subtle hint) ---- */
 .weather-day--today {
+    border-color: var(--accent2);
+}
+
+/* ---- Selected day (active) ---- */
+.weather-day--selected {
     border-color: var(--accent);
     background: var(--bg-card-hover);
     box-shadow: 0 0 16px var(--accent-glow), var(--shadow);
     position: relative;
 }
 
-.weather-day--today::before {
+.weather-day--selected::before {
     content: '';
     position: absolute;
     top: 0;
@@ -128,7 +137,7 @@
     white-space: nowrap;
 }
 
-.weather-day--today .weather-day-label {
+.weather-day--selected .weather-day-label {
     color: var(--accent-light);
 }
 
@@ -181,8 +190,10 @@
     color: var(--text-dim);
 }
 
-.weather-precip-icon {
-    font-size: 0.7rem;
+.weather-day-precip-label {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
 }
 
 /* ===== Tablet ===== */

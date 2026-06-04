@@ -84,6 +84,12 @@ class WeatherView(APIView):
                                 "weatherKey": serializers.CharField(),
                                 "icon": serializers.CharField(),
                                 "precipProbability": serializers.IntegerField(),
+                                "windSpeed": serializers.FloatField(allow_null=True),
+                                "uvIndex": serializers.IntegerField(allow_null=True),
+                                "humidity": serializers.IntegerField(allow_null=True),
+                                "visibility": serializers.IntegerField(allow_null=True),
+                                "sunrise": serializers.CharField(allow_null=True),
+                                "sunset": serializers.CharField(allow_null=True),
                             },
                         )
                     ),
@@ -103,7 +109,10 @@ class WeatherView(APIView):
                 "wind_speed_10m",
                 "is_day",
             ]),
-            "hourly": "visibility",
+            "hourly": ",".join([
+                "visibility",
+                "relative_humidity_2m",
+            ]),
             "daily": ",".join([
                 "temperature_2m_max",
                 "temperature_2m_min",
@@ -112,6 +121,7 @@ class WeatherView(APIView):
                 "sunrise",
                 "sunset",
                 "uv_index_max",
+                "wind_speed_10m_max",
             ]),
             "past_days": 1,
             "forecast_days": 7,
@@ -129,9 +139,17 @@ class WeatherView(APIView):
         d = body.get("daily", {})
         times = d.get("time", [])
 
+        humidity_by_date, visibility_by_date = self._hourly_daily_means(body)
+
+        def at(key, i):
+            arr = d.get(key) or []
+            return arr[i] if i < len(arr) else None
+
         days = []
         for i, date in enumerate(times):
             code = d["weather_code"][i]
+            wind = at("wind_speed_10m_max", i)
+            uv = at("uv_index_max", i)
             days.append({
                 "date": date,
                 "tempMax": round(d["temperature_2m_max"][i]),
@@ -140,11 +158,40 @@ class WeatherView(APIView):
                 "weatherKey": WMO_CODE_MAP.get(code, "clear"),
                 "icon": WMO_ICON_MAP.get(code, "🌡️"),
                 "precipProbability": d["precipitation_probability_max"][i] or 0,
+                "windSpeed": round(wind, 1) if wind is not None else None,
+                "uvIndex": round(uv) if uv is not None else None,
+                "humidity": humidity_by_date.get(date),
+                "visibility": visibility_by_date.get(date),
+                "sunrise": at("sunrise", i),
+                "sunset": at("sunset", i),
             })
 
         current = self._build_current(body, d, times)
 
         return Response({"current": current, "days": days}, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def _hourly_daily_means(body):
+        """Compute per-date mean humidity (%) and mean visibility (km) from hourly data."""
+        hourly = body.get("hourly") or {}
+        h_times = hourly.get("time") or []
+        h_hum = hourly.get("relative_humidity_2m") or []
+        h_vis = hourly.get("visibility") or []
+
+        hum_sum, hum_cnt = {}, {}
+        vis_sum, vis_cnt = {}, {}
+        for j, ht in enumerate(h_times):
+            date = ht[:10]
+            if j < len(h_hum) and h_hum[j] is not None:
+                hum_sum[date] = hum_sum.get(date, 0) + h_hum[j]
+                hum_cnt[date] = hum_cnt.get(date, 0) + 1
+            if j < len(h_vis) and h_vis[j] is not None:
+                vis_sum[date] = vis_sum.get(date, 0) + h_vis[j]
+                vis_cnt[date] = vis_cnt.get(date, 0) + 1
+
+        humidity = {dt: round(hum_sum[dt] / hum_cnt[dt]) for dt in hum_sum if hum_cnt[dt]}
+        visibility = {dt: round(vis_sum[dt] / vis_cnt[dt] / 1000) for dt in vis_sum if vis_cnt[dt]}
+        return humidity, visibility
 
     @staticmethod
     def _build_current(body, daily, times):

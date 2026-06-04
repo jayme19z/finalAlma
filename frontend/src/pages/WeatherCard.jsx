@@ -62,15 +62,22 @@ export default function WeatherCard() {
     const [weather, setWeather] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [selectedDate, setSelectedDate] = useState(null)
 
     useEffect(() => {
         setLoading(true)
         setError('')
         fetchAlmatyWeather()
-            .then((data) => setWeather(data))
+            .then((data) => {
+                setWeather(data)
+                const todayDay = data.days?.find((d) => isToday(d.date))
+                setSelectedDate(todayDay?.date || data.current?.date || data.days?.[0]?.date || null)
+            })
             .catch(() => setError(w.errorLoading))
             .finally(() => setLoading(false))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    const selectedDay = weather?.days?.find((d) => d.date === selectedDate) || null
 
     return (
         <div className="weather-card card fade-in">
@@ -90,98 +97,102 @@ export default function WeatherCard() {
                     <>
                         {weather.current && (
                             <div className="weather-current">
-                                <div className="weather-current-main">
-                                    <span className="weather-current-icon">{weather.current.icon}</span>
-                                    <div className="weather-current-info">
-                                        <div className="weather-current-temp">{weather.current.temp}°C</div>
-                                        <div className="weather-current-condition">
-                                            {w.codes[weather.current.weatherKey] || weather.current.weatherKey}
-                                        </div>
-                                        <div className="weather-current-feels">
-                                            {w.feelsLike} {weather.current.feelsLike}°
-                                        </div>
+                                <div className="weather-current-info">
+                                    <div className="weather-current-temp">{weather.current.temp}°C</div>
+                                    <div className="weather-current-condition">
+                                        {w.codes[weather.current.weatherKey] || weather.current.weatherKey}
+                                    </div>
+                                    <div className="weather-current-feels">
+                                        {w.feelsLike} {weather.current.feelsLike}°
                                     </div>
                                 </div>
-                                <span className="weather-current-location">📍 {w.location}</span>
+                                <span className="weather-current-location">{w.location}</span>
                             </div>
-                        )}
-
-                        {weather.current && (
-                            <>
-                                <h3 className="weather-section-title">{w.highlightTitle}</h3>
-                                <div className="weather-highlights">
-                                    <div className="weather-highlight">
-                                        <span className="weather-highlight-label">💨 {w.windStatus}</span>
-                                        <span className="weather-highlight-value">
-                                            {weather.current.windSpeed}<span className="weather-highlight-unit">{w.unitKmh}</span>
-                                        </span>
-                                    </div>
-                                    <div className="weather-highlight">
-                                        <span className="weather-highlight-label">💧 {w.humidity}</span>
-                                        <span className="weather-highlight-value">
-                                            {weather.current.humidity}<span className="weather-highlight-unit">%</span>
-                                        </span>
-                                    </div>
-                                    <div className="weather-highlight">
-                                        <span className="weather-highlight-label">☀️ {w.uvIndex}</span>
-                                        <span className="weather-highlight-value">
-                                            {weather.current.uvIndex ?? '—'}<span className="weather-highlight-unit">{w.unitUv}</span>
-                                        </span>
-                                    </div>
-                                    <div className="weather-highlight">
-                                        <span className="weather-highlight-label">👁️ {w.visibility}</span>
-                                        <span className="weather-highlight-value">
-                                            {weather.current.visibility ?? '—'}<span className="weather-highlight-unit">{w.unitKm}</span>
-                                        </span>
-                                    </div>
-                                    <div className="weather-highlight">
-                                        <span className="weather-highlight-label">🌅 {w.sunrise}</span>
-                                        <span className="weather-highlight-value weather-highlight-value--sm">
-                                            {formatTime(weather.current.sunrise, lang)}
-                                        </span>
-                                    </div>
-                                    <div className="weather-highlight">
-                                        <span className="weather-highlight-label">🌇 {w.sunset}</span>
-                                        <span className="weather-highlight-value weather-highlight-value--sm">
-                                            {formatTime(weather.current.sunset, lang)}
-                                        </span>
-                                    </div>
-                                </div>
-                            </>
                         )}
 
                         <h3 className="weather-section-title">{w.forecastTitle}</h3>
                         <div className="weather-days-scroll">
                             <div className="weather-days">
-                                {weather.days.map((day) => (
-                                    <div
-                                        key={day.date}
-                                        className={`weather-day${isToday(day.date) ? ' weather-day--today' : ''}`}
-                                    >
-                                        <span className="weather-day-label">
-                                            {formatDayLabel(day.date, t, lang)}
-                                        </span>
-                                        <span className="weather-day-icon">{day.icon}</span>
-                                        <span className="weather-day-condition">
-                                            {w.codes[day.weatherKey] || day.weatherKey}
-                                        </span>
-                                        <div className="weather-day-temps">
-                                            <span className="weather-temp-max">
-                                                {day.tempMax}°
+                                {weather.days.map((day) => {
+                                    const isSelected = day.date === selectedDate
+                                    return (
+                                        <button
+                                            key={day.date}
+                                            type="button"
+                                            onClick={() => setSelectedDate(day.date)}
+                                            aria-pressed={isSelected}
+                                            className={`weather-day${isToday(day.date) ? ' weather-day--today' : ''}${isSelected ? ' weather-day--selected' : ''}`}
+                                        >
+                                            <span className="weather-day-label">
+                                                {formatDayLabel(day.date, t, lang)}
                                             </span>
-                                            <span className="weather-temp-separator">/</span>
-                                            <span className="weather-temp-min">
-                                                {day.tempMin}°
+                                            <span className="weather-day-condition">
+                                                {w.codes[day.weatherKey] || day.weatherKey}
                                             </span>
-                                        </div>
-                                        <div className="weather-day-precip">
-                                            <span className="weather-precip-icon">💧</span>
-                                            <span>{day.precipProbability}%</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                            <div className="weather-day-temps">
+                                                <span className="weather-temp-max">
+                                                    {day.tempMax}°
+                                                </span>
+                                                <span className="weather-temp-separator">/</span>
+                                                <span className="weather-temp-min">
+                                                    {day.tempMin}°
+                                                </span>
+                                            </div>
+                                            <div className="weather-day-precip">
+                                                <span className="weather-day-precip-label">{w.precip}</span>
+                                                <span>{day.precipProbability}%</span>
+                                            </div>
+                                        </button>
+                                    )
+                                })}
                             </div>
                         </div>
+
+                        {selectedDay && (
+                            <>
+                                <h3 className="weather-section-title">
+                                    {formatDayLabel(selectedDay.date, t, lang)} · {w.highlightTitle}
+                                </h3>
+                                <div className="weather-highlights">
+                                    <div className="weather-highlight">
+                                        <span className="weather-highlight-label">{w.windStatus}</span>
+                                        <span className="weather-highlight-value">
+                                            {selectedDay.windSpeed ?? '—'}<span className="weather-highlight-unit">{w.unitKmh}</span>
+                                        </span>
+                                    </div>
+                                    <div className="weather-highlight">
+                                        <span className="weather-highlight-label">{w.humidity}</span>
+                                        <span className="weather-highlight-value">
+                                            {selectedDay.humidity ?? '—'}<span className="weather-highlight-unit">%</span>
+                                        </span>
+                                    </div>
+                                    <div className="weather-highlight">
+                                        <span className="weather-highlight-label">{w.uvIndex}</span>
+                                        <span className="weather-highlight-value">
+                                            {selectedDay.uvIndex ?? '—'}<span className="weather-highlight-unit">{w.unitUv}</span>
+                                        </span>
+                                    </div>
+                                    <div className="weather-highlight">
+                                        <span className="weather-highlight-label">{w.visibility}</span>
+                                        <span className="weather-highlight-value">
+                                            {selectedDay.visibility ?? '—'}<span className="weather-highlight-unit">{w.unitKm}</span>
+                                        </span>
+                                    </div>
+                                    <div className="weather-highlight">
+                                        <span className="weather-highlight-label">{w.sunrise}</span>
+                                        <span className="weather-highlight-value weather-highlight-value--sm">
+                                            {formatTime(selectedDay.sunrise, lang)}
+                                        </span>
+                                    </div>
+                                    <div className="weather-highlight">
+                                        <span className="weather-highlight-label">{w.sunset}</span>
+                                        <span className="weather-highlight-value weather-highlight-value--sm">
+                                            {formatTime(selectedDay.sunset, lang)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </>
                 ) : null}
             </div>
