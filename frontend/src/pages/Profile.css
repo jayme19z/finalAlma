@@ -176,3 +176,88 @@
     font-size: 1.05rem;
     line-height: 1;
 }
+
+/* Support / FAQ link cards */
+.profile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+}
+
+.profile-link-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.75rem 2rem;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    min-height: 44px;
+}
+
+.profile-link-card:hover {
+    border-color: var(--accent);
+}
+
+.profile-link-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-link-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+}
+
+.profile-link-content p {
+    color: var(--text-dim);
+    font-size: 1rem;
+}
+
+.profile-link-arrow {
+    font-size: 1.5rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    transition: transform var(--transition);
+}
+
+.profile-link-card:hover .profile-link-arrow {
+    transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+    .profile-link-card {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .profile-link-content h2 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-links {
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .profile-link-card {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .profile-link-content h2 {
+        font-size: 1.05rem;
+    }
+
+    .profile-link-content p {
+        font-size: 0.85rem;
+    }
+
+    .profile-link-arrow {
+        font-size: 1.2rem;
+    }
+}

@@ -51,6 +51,24 @@ export default function Profile() {
                 </Link>
                 <button className="btn btn-danger" onClick={handleLogout}>{t.profile.signOut}</button>
             </div>
+
+            <div className="profile-links">
+                <Link to="/support" className="profile-link-card card fade-in">
+                    <div className="profile-link-content">
+                        <h2>{t.profile.supportCard}</h2>
+                        <p>{t.profile.supportCardDesc}</p>
+                    </div>
+                    <span className="profile-link-arrow">→</span>
+                </Link>
+
+                <Link to="/faq" className="profile-link-card card fade-in">
+                    <div className="profile-link-content">
+                        <h2>{t.profile.faqCard}</h2>
+                        <p>{t.profile.faqCardDesc}</p>
+                    </div>
+                    <span className="profile-link-arrow">→</span>
+                </Link>
+            </div>
         </div>
     )
 }

@@ -1,0 +1,691 @@
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+index 4745621..e196b3b 100644
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -18,6 +18,8 @@ import EventDetail from './pages/EventDetail'
+ import Login from './pages/Login'
+ import Register from './pages/Register'
+ import Profile from './pages/Profile'
++import Support from './pages/Support'
++import Faq from './pages/Faq'
+ import Pro from './pages/Pro'
+ import Checkout from './pages/Checkout'
+ 
+@@ -48,6 +50,8 @@ export default function App() {
+                     <Route path="/calendar" element={<PrivateRoute><Calendar /></PrivateRoute>} />
+                     <Route path="/events/:id" element={<PrivateRoute><EventDetail /></PrivateRoute>} />
+                     <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
++                    <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
++                    <Route path="/faq" element={<PrivateRoute><Faq /></PrivateRoute>} />
+                     <Route path="/pro" element={<PrivateRoute><Pro /></PrivateRoute>} />
+                     <Route path="/pro/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
+                 </Routes>
+diff --git a/frontend/src/i18n/translations.jsx b/frontend/src/i18n/translations.jsx
+index aab5a95..33cc13e 100644
+--- a/frontend/src/i18n/translations.jsx
++++ b/frontend/src/i18n/translations.jsx
+@@ -181,13 +181,36 @@ const translations = {
+             signOut: 'Sign Out',
+             myCalendar: 'My Calendar Events',
+             noCalendar: 'No calendar events yet',
++            supportCard: 'Support',
++            supportCardDesc: 'Get help with the app',
++            faqCard: 'FAQ',
++            faqCardDesc: 'Frequently asked questions',
++            support: {
++                title: 'Support',
++                intro: 'Have a question or ran into a problem? Reach out and our team will get back to you as soon as possible.',
++                emailLabel: 'Email us',
++                email: 'support@almatour.kz',
++                phoneLabel: 'Call us',
++                phone: '+7 727 000 0000',
++                hours: 'Working hours: Mon–Fri, 9:00–18:00 (Almaty time)',
++            },
++            faq: {
++                title: 'FAQ',
++                items: [
++                    { q: 'How do I upgrade to the Pro plan?', a: 'Open your Profile and tap the Pro plan button, then follow the checkout steps.' },
++                    { q: 'How much does the Pro plan cost?', a: 'The Pro plan costs 990 ₸ per month.' },
++                    { q: 'Can I change the app language?', a: 'Yes. Use the language switcher in the navigation bar to choose your preferred language.' },
++                    { q: 'How do I add events to my calendar?', a: 'Open any event and tap “Add to calendar”. Your saved events appear in the Calendar tab.' },
++                    { q: 'Is Almatour free to use?', a: 'Most features are free. The Pro plan unlocks additional premium features.' },
++                ],
++            },
+         },
+         pro: {
+             badge: 'Pro',
+             openButton: 'Pro plan',
+             title: 'Almatour Pro',
+             subtitle: 'Unlock the full Almaty experience',
+-            monthly: '₸2,990 / month',
++            monthly: '₸990 / month',
+             free: 'Free',
+             proPlan: 'Pro',
+             yourPlan: 'Your plan',
+@@ -400,13 +423,36 @@ const translations = {
+             signOut: 'Выйти',
+             myCalendar: 'Мои события',
+             noCalendar: 'Нет событий в календаре',
++            supportCard: 'Поддержка',
++            supportCardDesc: 'Получите помощь с приложением',
++            faqCard: 'FAQ',
++            faqCardDesc: 'Часто задаваемые вопросы',
++            support: {
++                title: 'Поддержка',
++                intro: 'Возник вопрос или проблема? Напишите нам, и наша команда ответит вам как можно скорее.',
++                emailLabel: 'Напишите нам',
++                email: 'support@almatour.kz',
++                phoneLabel: 'Позвоните нам',
++                phone: '+7 727 000 0000',
++                hours: 'Часы работы: пн–пт, 9:00–18:00 (время Алматы)',
++            },
++            faq: {
++                title: 'FAQ',
++                items: [
++                    { q: 'Как перейти на тариф Pro?', a: 'Откройте профиль, нажмите кнопку тарифа Pro и следуйте шагам оформления.' },
++                    { q: 'Сколько стоит тариф Pro?', a: 'Тариф Pro стоит 990 ₸ в месяц.' },
++                    { q: 'Можно ли сменить язык приложения?', a: 'Да. Используйте переключатель языка в панели навигации, чтобы выбрать нужный язык.' },
++                    { q: 'Как добавить события в календарь?', a: 'Откройте любое событие и нажмите «Добавить в календарь». Сохранённые события появятся во вкладке «Календарь».' },
++                    { q: 'Almatour бесплатное?', a: 'Большинство функций бесплатны. Тариф Pro открывает дополнительные премиум-функции.' },
++                ],
++            },
+         },
+         pro: {
+             badge: 'Про',
+             openButton: 'Про-план',
+             title: 'Almatour Про',
+             subtitle: 'Откройте Алматы по полной',
+-            monthly: '2 990 ₸ / месяц',
++            monthly: '990 ₸ / месяц',
+             free: 'Бесплатно',
+             proPlan: 'Про',
+             yourPlan: 'Ваш план',
+@@ -619,13 +665,36 @@ const translations = {
+             signOut: 'Шығу',
+             myCalendar: 'Менің оқиғаларым',
+             noCalendar: 'Календарда оқиғалар жоқ',
++            supportCard: 'Қолдау',
++            supportCardDesc: 'Қолданба бойынша көмек алыңыз',
++            faqCard: 'FAQ',
++            faqCardDesc: 'Жиі қойылатын сұрақтар',
++            support: {
++                title: 'Қолдау',
++                intro: 'Сұрағыңыз бар ма немесе қиындыққа тап болдыңыз ба? Бізге жазыңыз, біздің команда сізге мүмкіндігінше тез жауап береді.',
++                emailLabel: 'Бізге жазыңыз',
++                email: 'support@almatour.kz',
++                phoneLabel: 'Бізге қоңырау шалыңыз',
++                phone: '+7 727 000 0000',
++                hours: 'Жұмыс уақыты: дс–жм, 9:00–18:00 (Алматы уақыты)',
++            },
++            faq: {
++                title: 'FAQ',
++                items: [
++                    { q: 'Pro тарифіне қалай ауысуға болады?', a: 'Профильді ашып, Pro тарифі түймесін басыңыз да, төлем қадамдарын орындаңыз.' },
++                    { q: 'Pro тарифі қанша тұрады?', a: 'Pro тарифі айына 990 ₸ тұрады.' },
++                    { q: 'Қолданба тілін өзгертуге бола ма?', a: 'Иә. Қалаған тілді таңдау үшін навигация панеліндегі тіл ауыстырғышын пайдаланыңыз.' },
++                    { q: 'Оқиғаларды күнтізбеге қалай қосамын?', a: 'Кез келген оқиғаны ашып, «Күнтізбеге қосу» түймесін басыңыз. Сақталған оқиғалар «Күнтізбе» бөлімінде көрінеді.' },
++                    { q: 'Almatour тегін бе?', a: 'Көптеген мүмкіндіктер тегін. Pro тарифі қосымша премиум мүмкіндіктерді ашады.' },
++                ],
++            },
+         },
+         pro: {
+             badge: 'Про',
+             openButton: 'Про-жоспар',
+             title: 'Almatour Про',
+             subtitle: 'Алматыны толық ашыңыз',
+-            monthly: 'айына 2 990 ₸',
++            monthly: 'айына 990 ₸',
+             free: 'Тегін',
+             proPlan: 'Про',
+             yourPlan: 'Сіздің жоспарыңыз',
+@@ -839,13 +908,36 @@ const translations = {
+             signOut: '退出登录',
+             myCalendar: '我的日历活动',
+             noCalendar: '暂无日历活动',
++            supportCard: '支持',
++            supportCardDesc: '获取应用使用帮助',
++            faqCard: 'FAQ',
++            faqCardDesc: '常见问题',
++            support: {
++                title: '支持',
++                intro: '有疑问或遇到问题？请联系我们，我们的团队将尽快回复您。',
++                emailLabel: '给我们发邮件',
++                email: 'support@almatour.kz',
++                phoneLabel: '致电我们',
++                phone: '+7 727 000 0000',
++                hours: '工作时间：周一至周五，9:00–18:00（阿拉木图时间）',
++            },
++            faq: {
++                title: 'FAQ',
++                items: [
++                    { q: '如何升级到 Pro 套餐？', a: '打开个人资料，点击 Pro 套餐按钮，然后按照结账步骤操作。' },
++                    { q: 'Pro 套餐多少钱？', a: 'Pro 套餐每月 990 ₸。' },
++                    { q: '可以更改应用语言吗？', a: '可以。使用导航栏中的语言切换器选择您偏好的语言。' },
++                    { q: '如何将活动添加到日历？', a: '打开任意活动并点击“添加到日历”。已保存的活动会显示在日历标签页中。' },
++                    { q: 'Almatour 免费吗？', a: '大多数功能免费。Pro 套餐可解锁额外的高级功能。' },
++                ],
++            },
+         },
+         pro: {
+             badge: 'Pro',
+             openButton: 'Pro 套餐',
+             title: 'Almatour Pro',
+             subtitle: '解锁完整的阿拉木图体验',
+-            monthly: '₸2,990 / 月',
++            monthly: '₸990 / 月',
+             free: '免费',
+             proPlan: 'Pro',
+             yourPlan: '您的套餐',
+@@ -1058,13 +1150,36 @@ const translations = {
+             signOut: 'Çıkış Yap',
+             myCalendar: 'Takvim Etkinliklerim',
+             noCalendar: 'Henüz takvim etkinliği yok',
++            supportCard: 'Destek',
++            supportCardDesc: 'Uygulama için yardım alın',
++            faqCard: 'SSS',
++            faqCardDesc: 'Sıkça sorulan sorular',
++            support: {
++                title: 'Destek',
++                intro: 'Bir sorunuz mu var ya da bir sorunla mı karşılaştınız? Bize ulaşın, ekibimiz en kısa sürede size geri dönsün.',
++                emailLabel: 'Bize e-posta gönderin',
++                email: 'support@almatour.kz',
++                phoneLabel: 'Bizi arayın',
++                phone: '+7 727 000 0000',
++                hours: 'Çalışma saatleri: Pzt–Cum, 9:00–18:00 (Almatı saati)',
++            },
++            faq: {
++                title: 'SSS',
++                items: [
++                    { q: 'Pro pakete nasıl geçerim?', a: 'Profilinizi açın, Pro paket düğmesine dokunun ve ödeme adımlarını izleyin.' },
++                    { q: 'Pro paket ne kadar?', a: 'Pro paket aylık 990 ₸.' },
++                    { q: 'Uygulama dilini değiştirebilir miyim?', a: 'Evet. Tercih ettiğiniz dili seçmek için gezinme çubuğundaki dil değiştiriciyi kullanın.' },
++                    { q: 'Etkinlikleri takvime nasıl eklerim?', a: 'Herhangi bir etkinliği açın ve “Takvime ekle”ye dokunun. Kaydedilen etkinlikler Takvim sekmesinde görünür.' },
++                    { q: 'Almatour ücretsiz mi?', a: 'Çoğu özellik ücretsizdir. Pro paket ek premium özellikler sunar.' },
++                ],
++            },
+         },
+         pro: {
+             badge: 'Pro',
+             openButton: 'Pro plan',
+             title: 'Almatour Pro',
+             subtitle: 'Almatı deneyimini tam aç',
+-            monthly: 'aylık ₸2.990',
++            monthly: 'aylık ₸990',
+             free: 'Ücretsiz',
+             proPlan: 'Pro',
+             yourPlan: 'Planınız',
+@@ -1277,13 +1392,36 @@ const translations = {
+             signOut: 'साइन आउट करें',
+             myCalendar: 'मेरे कैलेंडर कार्यक्रम',
+             noCalendar: 'अभी तक कोई कैलेंडर कार्यक्रम नहीं',
++            supportCard: 'सहायता',
++            supportCardDesc: 'ऐप के लिए सहायता पाएं',
++            faqCard: 'FAQ',
++            faqCardDesc: 'अक्सर पूछे जाने वाले प्रश्न',
++            support: {
++                title: 'सहायता',
++                intro: 'कोई प्रश्न है या कोई समस्या आई? हमसे संपर्क करें और हमारी टीम जल्द से जल्द आपको जवाब देगी।',
++                emailLabel: 'हमें ईमेल करें',
++                email: 'support@almatour.kz',
++                phoneLabel: 'हमें कॉल करें',
++                phone: '+7 727 000 0000',
++                hours: 'कार्य समय: सोम–शुक्र, 9:00–18:00 (अल्माटी समय)',
++            },
++            faq: {
++                title: 'FAQ',
++                items: [
++                    { q: 'मैं Pro प्लान में कैसे अपग्रेड करूं?', a: 'अपनी प्रोफ़ाइल खोलें और Pro प्लान बटन पर टैप करें, फिर चेकआउट चरणों का पालन करें।' },
++                    { q: 'Pro प्लान की कीमत कितनी है?', a: 'Pro प्लान की कीमत 990 ₸ प्रति माह है।' },
++                    { q: 'क्या मैं ऐप की भाषा बदल सकता हूं?', a: 'हां। अपनी पसंदीदा भाषा चुनने के लिए नेविगेशन बार में भाषा स्विचर का उपयोग करें।' },
++                    { q: 'मैं कैलेंडर में कार्यक्रम कैसे जोड़ूं?', a: 'कोई भी कार्यक्रम खोलें और “कैलेंडर में जोड़ें” पर टैप करें। आपके सहेजे गए कार्यक्रम कैलेंडर टैब में दिखाई देंगे।' },
++                    { q: 'क्या Almatour मुफ़्त है?', a: 'अधिकांश सुविधाएं मुफ़्त हैं। Pro प्लान अतिरिक्त प्रीमियम सुविधाएं अनलॉक करता है।' },
++                ],
++            },
+         },
+         pro: {
+             badge: 'प्रो',
+             openButton: 'प्रो प्लान',
+             title: 'Almatour प्रो',
+             subtitle: 'अल्माटी का पूरा अनुभव अनलॉक करें',
+-            monthly: '₸2,990 / माह',
++            monthly: '₸990 / माह',
+             free: 'मुफ़्त',
+             proPlan: 'प्रो',
+             yourPlan: 'आपका प्लान',
+@@ -1496,13 +1634,36 @@ const translations = {
+             signOut: '로그아웃',
+             myCalendar: '내 캘린더 행사',
+             noCalendar: '등록된 행사 없음',
++            supportCard: '지원',
++            supportCardDesc: '앱 사용 도움받기',
++            faqCard: 'FAQ',
++            faqCardDesc: '자주 묻는 질문',
++            support: {
++                title: '지원',
++                intro: '질문이 있거나 문제가 발생했나요? 문의해 주시면 저희 팀이 최대한 빨리 답변드리겠습니다.',
++                emailLabel: '이메일 보내기',
++                email: 'support@almatour.kz',
++                phoneLabel: '전화하기',
++                phone: '+7 727 000 0000',
++                hours: '운영 시간: 월–금, 9:00–18:00 (알마티 시간)',
++            },
++            faq: {
++                title: 'FAQ',
++                items: [
++                    { q: 'Pro 플랜으로 어떻게 업그레이드하나요?', a: '프로필을 열고 Pro 플랜 버튼을 누른 후 결제 단계를 따르세요.' },
++                    { q: 'Pro 플랜 요금은 얼마인가요?', a: 'Pro 플랜은 월 990 ₸입니다.' },
++                    { q: '앱 언어를 변경할 수 있나요?', a: '네. 탐색 바의 언어 전환기를 사용하여 원하는 언어를 선택하세요.' },
++                    { q: '행사를 캘린더에 어떻게 추가하나요?', a: '행사를 열고 “캘린더에 추가”를 누르세요. 저장된 행사는 캘린더 탭에 표시됩니다.' },
++                    { q: 'Almatour는 무료인가요?', a: '대부분의 기능은 무료입니다. Pro 플랜은 추가 프리미엄 기능을 제공합니다.' },
++                ],
++            },
+         },
+         pro: {
+             badge: '프로',
+             openButton: '프로 플랜',
+             title: 'Almatour 프로',
+             subtitle: '알마티를 완전하게 즐기세요',
+-            monthly: '월 ₸2,990',
++            monthly: '월 ₸990',
+             free: '무료',
+             proPlan: '프로',
+             yourPlan: '내 플랜',
+diff --git a/frontend/src/pages/Faq.jsx b/frontend/src/pages/Faq.jsx
+new file mode 100644
+index 0000000..f05c402
+--- /dev/null
++++ b/frontend/src/pages/Faq.jsx
+@@ -0,0 +1,39 @@
++import { useState } from 'react'
++import { Link } from 'react-router-dom'
++import { useLang } from '../i18n/translations'
++import './SupportFaq.css'
++
++export default function Faq() {
++    const { t } = useLang()
++    const faq = t.profile.faq
++    const [open, setOpen] = useState(null)
++
++    const toggle = (i) => setOpen(open === i ? null : i)
++
++    return (
++        <div className="faq-page container">
++            <Link to="/profile" className="back-link">{t.common.back}</Link>
++            <h1>{faq.title}</h1>
++
++            <div className="faq-list">
++                {faq.items.map((item, i) => (
++                    <div
++                        key={i}
++                        className={`faq-item card fade-in ${open === i ? 'faq-item-open' : ''}`}
++                    >
++                        <button
++                            type="button"
++                            className="faq-question"
++                            onClick={() => toggle(i)}
++                            aria-expanded={open === i}
++                        >
++                            <span>{item.q}</span>
++                            <span className="faq-chevron">{open === i ? '−' : '+'}</span>
++                        </button>
++                        {open === i && <p className="faq-answer">{item.a}</p>}
++                    </div>
++                ))}
++            </div>
++        </div>
++    )
++}
+diff --git a/frontend/src/pages/Info.jsx b/frontend/src/pages/Info.jsx
+index b3cc0bd..1a5fdb7 100644
+--- a/frontend/src/pages/Info.jsx
++++ b/frontend/src/pages/Info.jsx
+@@ -10,22 +10,6 @@ export default function Info() {
+             <h1>{t.info.title}</h1>
+ 
+             <div className="info-categories">
+-                <Link to="/translator" className="info-category-card card fade-in">
+-                    <div className="category-content">
+-                        <h2>{t.info.translator.title}</h2>
+-                        <p>{t.info.translator.desc}</p>
+-                    </div>
+-                    <span className="category-arrow">→</span>
+-                </Link>
+-
+-                <Link to="/weather" className="info-category-card card fade-in">
+-                    <div className="category-content">
+-                        <h2>{t.info.weather.title}</h2>
+-                        <p>{t.info.weather.desc}</p>
+-                    </div>
+-                    <span className="category-arrow">→</span>
+-                </Link>
+-
+                 <Link to="/emergency" className="info-category-card card fade-in">
+                     <div className="category-content">
+                         <h2>{t.info.emergencyCategory}</h2>
+diff --git a/frontend/src/pages/Profile.css b/frontend/src/pages/Profile.css
+index 4a565a7..5dcc5d4 100644
+--- a/frontend/src/pages/Profile.css
++++ b/frontend/src/pages/Profile.css
+@@ -176,3 +176,88 @@
+     font-size: 1.05rem;
+     line-height: 1;
+ }
++
++/* Support / FAQ link cards */
++.profile-links {
++    display: flex;
++    flex-direction: column;
++    gap: 1.25rem;
++    margin-top: 2.5rem;
++}
++
++.profile-link-card {
++    display: flex;
++    align-items: center;
++    gap: 1.5rem;
++    padding: 1.75rem 2rem;
++    text-decoration: none;
++    color: inherit;
++    cursor: pointer;
++    min-height: 44px;
++}
++
++.profile-link-card:hover {
++    border-color: var(--accent);
++}
++
++.profile-link-content {
++    flex: 1;
++    min-width: 0;
++}
++
++.profile-link-content h2 {
++    font-size: 1.5rem;
++    margin-bottom: 0.4rem;
++    color: var(--text);
++}
++
++.profile-link-content p {
++    color: var(--text-dim);
++    font-size: 1rem;
++}
++
++.profile-link-arrow {
++    font-size: 1.5rem;
++    color: var(--accent);
++    flex-shrink: 0;
++    transition: transform var(--transition);
++}
++
++.profile-link-card:hover .profile-link-arrow {
++    transform: translateX(4px);
++}
++
++@media (max-width: 768px) {
++    .profile-link-card {
++        padding: 1.25rem;
++        gap: 1rem;
++    }
++
++    .profile-link-content h2 {
++        font-size: 1.2rem;
++    }
++}
++
++@media (max-width: 480px) {
++    .profile-links {
++        gap: 1rem;
++        margin-top: 2rem;
++    }
++
++    .profile-link-card {
++        padding: 1rem;
++        gap: 0.75rem;
++    }
++
++    .profile-link-content h2 {
++        font-size: 1.05rem;
++    }
++
++    .profile-link-content p {
++        font-size: 0.85rem;
++    }
++
++    .profile-link-arrow {
++        font-size: 1.2rem;
++    }
++}
+diff --git a/frontend/src/pages/Profile.jsx b/frontend/src/pages/Profile.jsx
+index 6c24eef..2e3fb90 100644
+--- a/frontend/src/pages/Profile.jsx
++++ b/frontend/src/pages/Profile.jsx
+@@ -51,6 +51,24 @@ export default function Profile() {
+                 </Link>
+                 <button className="btn btn-danger" onClick={handleLogout}>{t.profile.signOut}</button>
+             </div>
++
++            <div className="profile-links">
++                <Link to="/support" className="profile-link-card card fade-in">
++                    <div className="profile-link-content">
++                        <h2>{t.profile.supportCard}</h2>
++                        <p>{t.profile.supportCardDesc}</p>
++                    </div>
++                    <span className="profile-link-arrow">→</span>
++                </Link>
++
++                <Link to="/faq" className="profile-link-card card fade-in">
++                    <div className="profile-link-content">
++                        <h2>{t.profile.faqCard}</h2>
++                        <p>{t.profile.faqCardDesc}</p>
++                    </div>
++                    <span className="profile-link-arrow">→</span>
++                </Link>
++            </div>
+         </div>
+     )
+ }
+diff --git a/frontend/src/pages/Support.jsx b/frontend/src/pages/Support.jsx
+new file mode 100644
+index 0000000..b9dffbd
+--- /dev/null
++++ b/frontend/src/pages/Support.jsx
+@@ -0,0 +1,37 @@
++import { Link } from 'react-router-dom'
++import { useLang } from '../i18n/translations'
++import './SupportFaq.css'
++
++export default function Support() {
++    const { t } = useLang()
++    const s = t.profile.support
++
++    return (
++        <div className="support-page container">
++            <Link to="/profile" className="back-link">{t.common.back}</Link>
++            <h1>{s.title}</h1>
++
++            <p className="support-intro fade-in">{s.intro}</p>
++
++            <div className="support-contact-list">
++                <a href={`mailto:${s.email}`} className="support-contact-card card fade-in">
++                    <span className="support-contact-icon">✉️</span>
++                    <div className="support-contact-body">
++                        <span className="support-contact-label">{s.emailLabel}</span>
++                        <span className="support-contact-value">{s.email}</span>
++                    </div>
++                </a>
++
++                <a href={`tel:${s.phone.replace(/\s/g, '')}`} className="support-contact-card card fade-in">
++                    <span className="support-contact-icon">📞</span>
++                    <div className="support-contact-body">
++                        <span className="support-contact-label">{s.phoneLabel}</span>
++                        <span className="support-contact-value">{s.phone}</span>
++                    </div>
++                </a>
++            </div>
++
++            <p className="support-hours fade-in">{s.hours}</p>
++        </div>
++    )
++}
+diff --git a/frontend/src/pages/SupportFaq.css b/frontend/src/pages/SupportFaq.css
+new file mode 100644
+index 0000000..aaa47fd
+--- /dev/null
++++ b/frontend/src/pages/SupportFaq.css
+@@ -0,0 +1,156 @@
++.support-page,
++.faq-page {
++    padding: 2rem 1.5rem;
++}
++
++.support-page .back-link,
++.faq-page .back-link {
++    display: inline-flex;
++    align-items: center;
++    margin-bottom: 1.5rem;
++    color: var(--accent-light);
++    font-weight: 600;
++    min-height: 44px;
++}
++
++.support-page h1,
++.faq-page h1 {
++    margin-bottom: 2rem;
++}
++
++/* ===== Support ===== */
++.support-intro {
++    color: var(--text-dim);
++    font-size: 1.05rem;
++    line-height: 1.7;
++    margin-bottom: 2rem;
++    max-width: 640px;
++}
++
++.support-contact-list {
++    display: flex;
++    flex-direction: column;
++    gap: 1.25rem;
++    margin-bottom: 2rem;
++}
++
++.support-contact-card {
++    display: flex;
++    align-items: center;
++    gap: 1.25rem;
++    padding: 1.5rem;
++    text-decoration: none;
++    color: inherit;
++    min-height: 44px;
++}
++
++.support-contact-card:hover {
++    border-color: var(--accent);
++}
++
++.support-contact-icon {
++    font-size: 1.75rem;
++    flex-shrink: 0;
++}
++
++.support-contact-body {
++    display: flex;
++    flex-direction: column;
++    gap: 0.25rem;
++    min-width: 0;
++}
++
++.support-contact-label {
++    font-size: 0.8rem;
++    color: var(--text-dim);
++    text-transform: uppercase;
++    letter-spacing: 0.05em;
++    font-weight: 600;
++}
++
++.support-contact-value {
++    font-size: 1.05rem;
++    color: var(--accent-light);
++    font-weight: 600;
++    word-break: break-word;
++}
++
++.support-hours {
++    color: var(--text-dim);
++    font-size: 0.95rem;
++    line-height: 1.6;
++}
++
++/* ===== FAQ ===== */
++.faq-list {
++    display: flex;
++    flex-direction: column;
++    gap: 1rem;
++}
++
++.faq-item {
++    padding: 0;
++    overflow: hidden;
++}
++
++.faq-question {
++    width: 100%;
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++    gap: 1rem;
++    padding: 1.25rem 1.5rem;
++    background: none;
++    border: none;
++    cursor: pointer;
++    text-align: left;
++    font-size: 1.1rem;
++    font-weight: 600;
++    color: var(--text);
++    min-height: 44px;
++}
++
++.faq-chevron {
++    font-size: 1.5rem;
++    color: var(--accent);
++    flex-shrink: 0;
++    line-height: 1;
++}
++
++.faq-answer {
++    padding: 0 1.5rem 1.25rem;
++    color: var(--text-dim);
++    font-size: 1rem;
++    line-height: 1.7;
++}
++
++/* ===== Tablet ===== */
++@media (max-width: 768px) {
++    .support-page,
++    .faq-page {
++        padding: 1.5rem 1rem;
++    }
++}
++
++/* ===== Small Mobile ===== */
++@media (max-width: 480px) {
++    .support-page,
++    .faq-page {
++        padding: 1rem 0.75rem;
++    }
++
++    .support-contact-card {
++        padding: 1.25rem;
++        gap: 1rem;
++    }
++
++    .faq-question {
++        padding: 1rem 1.25rem;
++        font-size: 1rem;
++    }
++
++    .faq-answer {
++        padding: 0 1.25rem 1rem;
++        font-size: 0.9rem;
++    }
++}

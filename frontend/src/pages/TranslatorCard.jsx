@@ -6,8 +6,24 @@ import './TranslatorCard.css'
 const LANG_CODES = ['en', 'ru', 'kk', 'zh', 'tr', 'hi', 'fr', 'de', 'es', 'ar', 'ja', 'ko']
 const MAX_CHARS = 2000
 
+// Common travel phrases, written in the language being translated FROM.
+const QUICK_PHRASES = {
+    en: ['Hello!', 'How are you?', 'Thank you', 'How much is it?', 'Where is the toilet?', 'Help!'],
+    ru: ['Привет!', 'Как дела?', 'Спасибо', 'Сколько это стоит?', 'Где туалет?', 'Помогите!'],
+    kk: ['Сәлем!', 'Қалыңыз қалай?', 'Рақмет', 'Бұл қанша тұрады?', 'Дәретхана қайда?', 'Көмектесіңіз!'],
+    zh: ['你好！', '你好吗？', '谢谢', '多少钱？', '厕所在哪里？', '救命！'],
+    tr: ['Merhaba!', 'Nasılsın?', 'Teşekkürler', 'Ne kadar?', 'Tuvalet nerede?', 'İmdat!'],
+    hi: ['नमस्ते!', 'आप कैसे हैं?', 'धन्यवाद', 'यह कितने का है?', 'शौचालय कहाँ है?', 'मदद करो!'],
+    fr: ['Bonjour !', 'Comment ça va ?', 'Merci', "C'est combien ?", 'Où sont les toilettes ?', "À l'aide !"],
+    de: ['Hallo!', 'Wie geht es dir?', 'Danke', 'Wie viel kostet das?', 'Wo ist die Toilette?', 'Hilfe!'],
+    es: ['¡Hola!', '¿Cómo estás?', 'Gracias', '¿Cuánto cuesta?', '¿Dónde está el baño?', '¡Ayuda!'],
+    ar: ['مرحبا!', 'كيف حالك؟', 'شكرا', 'كم سعره؟', 'أين الحمام؟', 'النجدة!'],
+    ja: ['こんにちは！', 'お元気ですか？', 'ありがとう', 'いくらですか？', 'トイレはどこですか？', '助けて！'],
+    ko: ['안녕하세요!', '어떻게 지내세요?', '감사합니다', '얼마예요?', '화장실이 어디예요?', '도와주세요!'],
+}
+
 export default function TranslatorCard() {
-    const { t } = useLang()
+    const { t, lang } = useLang()
     const tr = t.info.translator
 
     const [text, setText] = useState('')
@@ -20,15 +36,16 @@ export default function TranslatorCard() {
 
     const canTranslate = text.trim().length > 0 && !loading
 
-    const handleTranslate = async () => {
-        if (!canTranslate) return
+    const handleTranslate = async (overrideText) => {
+        const sourceText = (typeof overrideText === 'string' ? overrideText : text).trim()
+        if (!sourceText || loading) return
         setLoading(true)
         setError('')
         setResult('')
         setDetectedLang('')
         try {
             const { data } = await translateText({
-                text: text.trim(),
+                text: sourceText,
                 source,
                 target,
             })
@@ -41,6 +58,15 @@ export default function TranslatorCard() {
             setLoading(false)
         }
     }
+
+    const handleQuickPhrase = (phrase) => {
+        if (loading) return
+        setText(phrase)
+        handleTranslate(phrase)
+    }
+
+    const phraseLang = source === 'auto' ? (lang === 'kz' ? 'kk' : lang) : source
+    const quickPhrases = QUICK_PHRASES[phraseLang] || QUICK_PHRASES.en
 
     const handleClear = () => {
         setText('')
@@ -89,6 +115,23 @@ export default function TranslatorCard() {
                 />
                 <div className="translator-char-count">
                     {text.length}/{MAX_CHARS} {tr.charLimit}
+                </div>
+
+                <div className="translator-quick">
+                    <span className="translator-quick-label">{tr.quickPhrases}</span>
+                    <div className="translator-quick-chips">
+                        {quickPhrases.map((phrase) => (
+                            <button
+                                key={phrase}
+                                type="button"
+                                className="translator-chip"
+                                onClick={() => handleQuickPhrase(phrase)}
+                                disabled={loading}
+                            >
+                                {phrase}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="translator-controls">

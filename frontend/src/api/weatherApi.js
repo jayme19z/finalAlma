@@ -1,8 +1,12 @@
 /**
  * Weather API service.
- * Fetches the daily Almaty forecast from the backend weather module
+ * Fetches the Almaty forecast from the backend weather module
  * (which proxies Open-Meteo). Returns:
- *   { days: [ { date, tempMax, tempMin, weatherCode, weatherKey, icon, precipProbability } ] }
+ *   {
+ *     current: { temp, feelsLike, humidity, windSpeed, weatherCode, weatherKey,
+ *                icon, isDay, uvIndex, visibility, sunrise, sunset, date },
+ *     days: [ { date, tempMax, tempMin, weatherCode, weatherKey, icon, precipProbability } ]
+ *   }
  */
 
 const WEATHER_URL = '/api/v1/weather/'

@@ -18,6 +18,8 @@ import EventDetail from './pages/EventDetail'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
+import Support from './pages/Support'
+import Faq from './pages/Faq'
 import Pro from './pages/Pro'
 import Checkout from './pages/Checkout'
 
@@ -48,6 +50,8 @@ export default function App() {
                     <Route path="/calendar" element={<PrivateRoute><Calendar /></PrivateRoute>} />
                     <Route path="/events/:id" element={<PrivateRoute><EventDetail /></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+                    <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
+                    <Route path="/faq" element={<PrivateRoute><Faq /></PrivateRoute>} />
                     <Route path="/pro" element={<PrivateRoute><Pro /></PrivateRoute>} />
                     <Route path="/pro/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
                 </Routes>

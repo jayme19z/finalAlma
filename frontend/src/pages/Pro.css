@@ -17,9 +17,9 @@
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.04em;
-    color: #1a1205;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    color: #fff;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
     margin-bottom: 1rem;
 }
 

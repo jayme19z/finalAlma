@@ -175,3 +175,52 @@
         font-size: 0.9rem;
     }
 }
+/* ===== Quick phrases ===== */
+.translator-quick {
+    margin-bottom: 1rem;
+}
+
+.translator-quick-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+}
+
+.translator-quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.translator-chip {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+
+.translator-chip:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent-light);
+    background: var(--accent-glow);
+}
+
+.translator-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .translator-chip {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.7rem;
+    }
+}
