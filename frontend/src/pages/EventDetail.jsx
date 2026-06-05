@@ -14,6 +14,8 @@ export default function EventDetail() {
     const [loading, setLoading] = useState(true)
     const [calendarId, setCalendarId] = useState(null)
     const [copied, setCopied] = useState(false)
+    const [calBusy, setCalBusy] = useState(false)
+    const [calMsg, setCalMsg] = useState(null) // { type, text }
 
     useEffect(() => {
         getEvent(id)
@@ -31,19 +33,41 @@ export default function EventDetail() {
         }
     }, [id, user])
 
+    const showCalMsg = (type, text) => {
+        setCalMsg({ type, text })
+        setTimeout(() => setCalMsg(null), 3000)
+    }
+
     const handleAddCalendar = async () => {
+        setCalBusy(true)
         try {
             const res = await addCalendarEvent({ event: parseInt(id), status: 0 })
             setCalendarId(res.data.id)
-        } catch { }
+            showCalMsg('success', t.events.addedToCalendar || 'Added to calendar!')
+        } catch (err) {
+            console.error('Failed to add to calendar:', err)
+            const msg = err.response?.status === 400
+                ? (t.events.alreadyInCalendar || 'Already in your calendar')
+                : (t.events.calendarError || 'Failed to add to calendar')
+            showCalMsg('error', msg)
+        } finally {
+            setCalBusy(false)
+        }
     }
 
     const handleRemoveCalendar = async () => {
         if (!calendarId) return
+        setCalBusy(true)
         try {
             await removeCalendarEvent(calendarId)
             setCalendarId(null)
-        } catch { }
+            showCalMsg('success', t.events.removedFromCalendar || 'Removed from calendar')
+        } catch (err) {
+            console.error('Failed to remove from calendar:', err)
+            showCalMsg('error', t.events.calendarError || 'Failed to remove from calendar')
+        } finally {
+            setCalBusy(false)
+        }
     }
 
     const copyAddress = useCallback(() => {
@@ -161,9 +185,18 @@ export default function EventDetail() {
                 {user && (
                     <div className="calendar-action">
                         {calendarId ? (
-                            <button className="btn btn-danger" onClick={handleRemoveCalendar}>{t.events.removeFromCalendar}</button>
+                            <button className="btn btn-danger" onClick={handleRemoveCalendar} disabled={calBusy}>
+                                {calBusy ? '…' : t.events.removeFromCalendar}
+                            </button>
                         ) : (
-                            <button className="btn btn-primary" onClick={handleAddCalendar}>{t.events.addToCalendar}</button>
+                            <button className="btn btn-primary" onClick={handleAddCalendar} disabled={calBusy}>
+                                {calBusy ? '…' : t.events.addToCalendar}
+                            </button>
+                        )}
+                        {calMsg && (
+                            <span className={`cal-msg ${calMsg.type}`}>
+                                {calMsg.type === 'success' ? '✓' : '✕'} {calMsg.text}
+                            </span>
                         )}
                     </div>
                 )}

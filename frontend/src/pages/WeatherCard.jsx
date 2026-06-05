@@ -55,6 +55,70 @@ function formatTime(iso, lang) {
     })
 }
 
+function getWeatherIcon(weatherKey) {
+    const key = (weatherKey || '').toLowerCase()
+    
+    // Rain / Storm
+    if (key.includes('rain') || key.includes('drizzle') || key.includes('thunderstorm') || key.includes('storm')) {
+        return (
+            <svg viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent)' }}>
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                <line x1="8" y1="21" x2="8" y2="23" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="16" y1="21" x2="16" y2="23" />
+            </svg>
+        )
+    }
+    
+    // Snow
+    if (key.includes('snow') || key.includes('grains')) {
+        return (
+            <svg viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#93c5fd' }}>
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                <line x1="8" y1="22" x2="8.01" y2="22" />
+                <line x1="12" y1="22" x2="12.01" y2="22" />
+                <line x1="16" y1="22" x2="16.01" y2="22" />
+            </svg>
+        )
+    }
+
+    // Partly cloudy / Mostly clear
+    if (key.includes('mainlyclear') || key.includes('partlycloudy')) {
+        return (
+            <svg viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v2M4.93 4.93l1.41 1.41M20 12h2M19.07 4.93l-1.41 1.41" stroke="#eab308" />
+                <circle cx="12" cy="12" r="4" stroke="#eab308" fill="#eab308" fillOpacity="0.2" />
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" fill="var(--bg-surface)" stroke="currentColor" />
+            </svg>
+        )
+    }
+    
+    // Cloud / Overcast / Fog
+    if (key.includes('cloud') || key.includes('overcast') || key.includes('fog')) {
+        return (
+            <svg viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-dim)' }}>
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+            </svg>
+        )
+    }
+    
+    // Sun / Clear
+    return (
+        <svg viewBox="0 0 24 24" width="1em" height="1em" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#eab308' }}>
+            <circle cx="12" cy="12" r="5" fill="#eab308" opacity="0.2" />
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+    )
+}
+
 export default function WeatherCard() {
     const { t, lang } = useLang()
     const w = t.info.weather
@@ -97,13 +161,18 @@ export default function WeatherCard() {
                     <>
                         {weather.current && (
                             <div className="weather-current">
-                                <div className="weather-current-info">
-                                    <div className="weather-current-temp">{weather.current.temp}°C</div>
-                                    <div className="weather-current-condition">
-                                        {w.codes[weather.current.weatherKey] || weather.current.weatherKey}
+                                <div className="weather-current-main">
+                                    <div className="weather-current-icon">
+                                        {getWeatherIcon(weather.current.weatherKey)}
                                     </div>
-                                    <div className="weather-current-feels">
-                                        {w.feelsLike} {weather.current.feelsLike}°
+                                    <div className="weather-current-info">
+                                        <div className="weather-current-temp">{weather.current.temp}°C</div>
+                                        <div className="weather-current-condition">
+                                            {w.codes[weather.current.weatherKey] || weather.current.weatherKey}
+                                        </div>
+                                        <div className="weather-current-feels">
+                                            {w.feelsLike} {weather.current.feelsLike}°
+                                        </div>
                                     </div>
                                 </div>
                                 <span className="weather-current-location">{w.location}</span>
@@ -126,6 +195,9 @@ export default function WeatherCard() {
                                             <span className="weather-day-label">
                                                 {formatDayLabel(day.date, t, lang)}
                                             </span>
+                                            <div className="weather-day-icon">
+                                                {getWeatherIcon(day.weatherKey)}
+                                            </div>
                                             <span className="weather-day-condition">
                                                 {w.codes[day.weatherKey] || day.weatherKey}
                                             </span>

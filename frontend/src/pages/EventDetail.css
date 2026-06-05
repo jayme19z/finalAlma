@@ -12,6 +12,33 @@
 
 .calendar-action {
     margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cal-msg {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.cal-msg.success {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.cal-msg.error {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* ===== Tablet ===== */
