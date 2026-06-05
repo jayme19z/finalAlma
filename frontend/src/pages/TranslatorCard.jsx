@@ -1,9 +1,25 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useLang } from '../i18n/translations'
 import { translateText } from '../api/client'
 import './TranslatorCard.css'
 
-const LANG_CODES = ['en', 'ru', 'kk', 'zh', 'tr', 'hi', 'fr', 'de', 'es', 'ar', 'ja', 'ko']
+// All languages supported by the Google Cloud Translation API (v2).
+// Display names are resolved at runtime via Intl.DisplayNames, so the
+// dropdown is automatically localized to the current UI language.
+const LANG_CODES = [
+    'af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho', 'bm', 'bn',
+    'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da', 'de', 'doi', 'dv', 'ee',
+    'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fil', 'fr', 'fy', 'ga',
+    'gd', 'gl', 'gn', 'gom', 'gu', 'ha', 'haw', 'he', 'hi', 'hmn', 'hr', 'ht',
+    'hu', 'hy', 'id', 'ig', 'ilo', 'is', 'it', 'ja', 'jv', 'ka', 'kk', 'km',
+    'kn', 'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt', 'lus',
+    'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr', 'ms', 'mt',
+    'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt',
+    'qu', 'ro', 'ru', 'rw', 'sa', 'sd', 'si', 'sk', 'sl', 'sm', 'sn', 'so',
+    'sq', 'sr', 'st', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk',
+    'tr', 'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo', 'zh-CN',
+    'zh-TW', 'zu',
+]
 const MAX_CHARS = 2000
 
 // Common travel phrases, written in the language being translated FROM.
@@ -66,7 +82,10 @@ export default function TranslatorCard() {
     }
 
     const phraseLang = source === 'auto' ? (lang === 'kz' ? 'kk' : lang) : source
-    const quickPhrases = QUICK_PHRASES[phraseLang] || QUICK_PHRASES.en
+    const quickPhrases =
+        QUICK_PHRASES[phraseLang] ||
+        QUICK_PHRASES[phraseLang.split('-')[0]] ||
+        QUICK_PHRASES.en
 
     const handleClear = () => {
         setText('')
@@ -94,7 +113,37 @@ export default function TranslatorCard() {
         }
     }
 
-    const langName = (code) => tr.langs[code] || code
+    const uiLocale = lang === 'kz' ? 'kk' : lang
+
+    // Localized language names for the current UI language, with English
+    // as a fallback locale and the raw code as a last resort.
+    const displayNames = useMemo(() => {
+        try {
+            return new Intl.DisplayNames([uiLocale, 'en'], { type: 'language' })
+        } catch {
+            return null
+        }
+    }, [uiLocale])
+
+    const langName = (code) => {
+        const fromI18n = tr.langs[code] || tr.langs[code.split('-')[0]]
+        if (fromI18n) return fromI18n
+        try {
+            const name = displayNames?.of(code)
+            if (name && name !== code) {
+                return name.charAt(0).toUpperCase() + name.slice(1)
+            }
+        } catch {
+            // Intl can't resolve this code — fall through to the raw code.
+        }
+        return code
+    }
+
+    const sortedLangCodes = useMemo(
+        () => [...LANG_CODES].sort((a, b) => langName(a).localeCompare(langName(b), uiLocale)),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [uiLocale, displayNames]
+    )
 
     return (
         <div className="translator-card card fade-in">
@@ -142,7 +191,7 @@ export default function TranslatorCard() {
                             className="translator-select"
                         >
                             <option value="auto">{tr.autoDetect}</option>
-                            {LANG_CODES.map((code) => (
+                            {sortedLangCodes.map((code) => (
                                 <option key={code} value={code}>
                                     {langName(code)}
                                 </option>
@@ -164,7 +213,7 @@ export default function TranslatorCard() {
                             onChange={(e) => setTarget(e.target.value)}
                             className="translator-select"
                         >
-                            {LANG_CODES.map((code) => (
+                            {sortedLangCodes.map((code) => (
                                 <option key={code} value={code}>
                                     {langName(code)}
                                 </option>
