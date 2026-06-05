@@ -1,9 +1,8 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { LangProvider } from './i18n/translations'
-import { useAuth } from './context/AuthContext'
+import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import PrivateRoute from './components/PrivateRoute'
+import Home from './pages/Home'
 import Info from './pages/Info'
 import Translator from './pages/Translator'
 import Weather from './pages/Weather'
@@ -23,19 +22,13 @@ import Faq from './pages/Faq'
 import Pro from './pages/Pro'
 import Checkout from './pages/Checkout'
 
-function RootRedirect() {
-    const { user, loading } = useAuth()
-    if (loading) return <div className="loading-container"><div className="spinner"></div></div>
-    return user ? <Navigate to="/places" replace /> : <Navigate to="/login" replace />
-}
-
 export default function App() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar />
             <main style={{ flex: 1, padding: '2rem 0' }}>
                 <Routes>
-                    <Route path="/" element={<RootRedirect />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/info" element={<PrivateRoute><Info /></PrivateRoute>} />

@@ -19,7 +19,7 @@ export default function Login() {
         setLoading(true)
         try {
             await loginUser(email, password)
-            navigate('/events')
+            navigate('/places')
         } catch (err) {
             setError(err.response?.data?.detail || t.common.error)
         } finally {

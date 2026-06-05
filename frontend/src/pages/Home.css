@@ -1,256 +1,426 @@
-/* Hero */
-.hero {
+/* ============================================================
+   Home / Landing page
+   Reuses the project's design tokens (--bg-card, --border,
+   --radius, --text, --shadow, fonts...). The vivid green used
+   across the hero, highlights and CTA stays within the project
+   palette (it is the existing --success green, scoped locally
+   so global theme tokens are never touched).
+   ============================================================ */
+.home {
+    --lp-green: #22c55e;
+    --lp-green-dark: #15803d;
+    --lp-green-glow: rgba(34, 197, 94, 0.35);
+}
+
+/* The landing page replaces the default main padding */
+.home {
+    margin: -2rem 0;
+}
+
+.lp-accent {
+    color: var(--lp-green);
+}
+
+/* ---------- Hero ---------- */
+.lp-hero {
     position: relative;
-    min-height: 70vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    background: var(--bg-dark);
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    width: 100%;
-    padding: 4rem 1.5rem;
-}
-
-.hero-title {
-    font-size: 4rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    color: var(--text);
-}
-
-.hero-sub {
-    font-size: 1.25rem;
-    color: var(--text-dim);
-    max-width: 600px;
-    margin: 0 auto 2rem;
-}
-
-.hero-actions {
-    display: flex;
-    gap: 1rem;
     justify-content: center;
-    flex-wrap: wrap;
+    overflow: hidden;
+    text-align: center;
+    isolation: isolate;
 }
 
-/* Sections */
-.section {
-    padding: 3rem 0;
+.lp-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: url('/hero-almaty.png') center 18% / cover no-repeat;
+    z-index: -2;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+.lp-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.55) 0%, rgba(15, 23, 42, 0.35) 45%, var(--bg-dark) 100%);
 }
 
-.section-title {
-    font-size: 1.75rem;
+.lp-hero-content {
+    padding: 8.5rem 1.5rem 7rem;
+    max-width: 820px;
+}
+
+.lp-hero-title {
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.lp-hero-title .lp-accent {
+    display: block;
+}
+
+.lp-hero-sub {
+    margin: 1.4rem auto 2.2rem;
+    max-width: 560px;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------- Buttons ---------- */
+.lp-btn {
+    background: var(--lp-green);
+    color: #fff;
+    box-shadow: 0 6px 20px var(--lp-green-glow);
     font-weight: 700;
 }
 
-.view-all {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.95rem;
+.lp-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px var(--lp-green-glow);
+    background: #1eb155;
 }
 
-.empty-msg {
-    color: var(--text-dim);
+.lp-btn-grad {
+    background: linear-gradient(135deg, var(--lp-green-dark), var(--lp-green));
+}
+
+.lp-btn-arrow {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+}
+
+.lp-btn-arrow svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- Section frame ---------- */
+.lp-section {
+    padding: 5rem 0;
+}
+
+.lp-section-alt {
+    background: var(--bg-surface);
+}
+
+.lp-h2 {
+    font-size: clamp(1.7rem, 4vw, 2.5rem);
+    font-weight: 800;
     text-align: center;
-    padding: 2rem;
+    letter-spacing: -0.01em;
 }
 
-/* Places Grid */
-.places-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+.lp-h2-center {
+    text-align: center;
 }
 
-.place-card {
-    text-decoration: none;
-    color: inherit;
+.lp-h2-sm {
+    text-align: left;
+    font-size: clamp(1.4rem, 3.2vw, 1.9rem);
 }
 
-.place-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.place-info {
-    padding: 1rem 1.25rem;
-}
-
-.place-info h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.4rem;
-    color: var(--text);
-}
-
-.place-address {
+.lp-lead {
+    text-align: center;
     color: var(--text-dim);
-    font-size: 0.9rem;
+    font-size: 1.05rem;
+    max-width: 640px;
+    margin: 0.9rem auto 0;
 }
 
-/* Events Grid */
-.events-grid {
+.lp-lead-tight {
+    text-align: left;
+    margin-left: 0;
+}
+
+.lp-lead-center {
+    text-align: center;
+}
+
+/* ---------- Stats grid ---------- */
+.lp-stats-grid {
+    margin-top: 3rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
 }
 
-.event-card {
-    text-decoration: none;
-    color: inherit;
+.lp-stat-card {
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-height: 220px;
 }
 
-.event-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
+.lp-stat-value {
+    margin-top: auto;
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
 }
 
-.event-info {
-    padding: 1rem 1.25rem;
-}
-
-.event-info h3 {
-    font-size: 1.05rem;
-    margin-bottom: 0.5rem;
+.lp-stat-label {
+    font-weight: 700;
     color: var(--text);
 }
 
-.event-meta {
+.lp-stat-sub {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+/* ---------- Icon tiles / badges ---------- */
+.lp-icon-tile {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lp-icon-tile svg {
+    width: 24px;
+    height: 24px;
+}
+
+.lp-icon-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.lp-icon-badge svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* tone palette — soft tile for stats, solid badge for features */
+.tone-blue { color: #3b82f6; }
+.tone-cyan { color: #06b6d4; }
+.tone-violet { color: #8b5cf6; }
+.tone-green { color: #16a34a; }
+.tone-red { color: #ef4444; }
+.tone-sky { color: #0ea5e9; }
+.tone-pink { color: #ec4899; }
+
+.lp-icon-tile.tone-blue { background: rgba(59, 130, 246, 0.14); }
+.lp-icon-tile.tone-cyan { background: rgba(6, 182, 212, 0.14); }
+.lp-icon-tile.tone-violet { background: rgba(139, 92, 246, 0.14); }
+.lp-icon-tile.tone-green { background: rgba(22, 163, 74, 0.14); }
+
+.lp-icon-badge.tone-blue { background: #3b82f6; }
+.lp-icon-badge.tone-violet { background: #8b5cf6; }
+.lp-icon-badge.tone-red { background: #ef4444; }
+.lp-icon-badge.tone-green { background: #16a34a; }
+.lp-icon-badge.tone-sky { background: #0ea5e9; }
+.lp-icon-badge.tone-pink { background: #ec4899; }
+
+/* ---------- Features grid ---------- */
+.lp-features-grid {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+}
+
+.lp-feature-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.lp-feature-media {
+    position: relative;
+    height: 170px;
+}
+
+.lp-feature-media.tone-blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+.lp-feature-media.tone-violet { background: linear-gradient(135deg, #7c3aed, #c084fc); }
+.lp-feature-media.tone-red { background: linear-gradient(135deg, #ef4444, #fb923c); }
+.lp-feature-media.tone-green { background: linear-gradient(135deg, #16a34a, #4ade80); }
+.lp-feature-media.tone-sky { background: linear-gradient(135deg, #0c4a6e, #38bdf8); }
+.lp-feature-media.tone-pink { background: linear-gradient(135deg, #db2777, #f9a8d4); }
+
+.lp-feature-body {
+    padding: 1.4rem 1.5rem 1.75rem;
+}
+
+.lp-feature-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.55rem;
+}
+
+.lp-feature-desc {
+    color: var(--text-dim);
+    font-size: 0.97rem;
+    line-height: 1.55;
+}
+
+/* ---------- Partners ---------- */
+.lp-partners {
+    margin-top: 2.75rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    font-size: 0.85rem;
-    color: var(--text-dim);
+    align-items: center;
+    justify-content: center;
+    gap: 1.75rem;
 }
 
-/* Ads */
-.ads-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
+/* White chip keeps every logo legible in both light and dark themes */
+.lp-partner-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.75rem;
+    min-width: 180px;
+    height: 96px;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    text-decoration: none;
 }
 
-.ad-card {
-    background: var(--bg-card);
-    border-color: var(--accent);
+.lp-partner-chip:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
 }
 
-.ad-img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
+.lp-partner-logo {
+    max-height: 52px;
+    max-width: 170px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
-.ad-info {
-    padding: 1rem;
+/* visit Almaty: isolated orange sun + re-typeset wordmark */
+.lp-partner-logo-sun {
+    max-height: 56px;
+    max-width: 56px;
 }
 
-.ad-info h4 {
-    margin-bottom: 0.3rem;
-    color: var(--accent);
+.lp-partner-wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    color: #111111;
+    text-align: left;
 }
 
-.ad-info p {
-    font-size: 0.9rem;
-    color: var(--text-dim);
+.lp-wm-1 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
-/* ===== Tablet ===== */
+.lp-wm-2 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+/* ---------- CTA ---------- */
+.lp-cta {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 4.5rem 1.5rem;
+    text-align: center;
+    background:
+        radial-gradient(120% 140% at 0% 0%, rgba(139, 92, 246, 0.16), transparent 55%),
+        radial-gradient(120% 140% at 100% 0%, rgba(56, 189, 248, 0.18), transparent 55%),
+        radial-gradient(120% 140% at 100% 100%, rgba(236, 72, 153, 0.14), transparent 55%),
+        var(--bg-card);
+}
+
+.lp-cta .lp-lead {
+    margin-bottom: 2rem;
+}
+
+/* ============================================================
+   Responsive — mobile adaptation
+   ============================================================ */
+@media (max-width: 992px) {
+    .lp-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lp-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
-    .hero {
-        min-height: 55vh;
+    .lp-section {
+        padding: 3.25rem 0;
     }
 
-    .hero-content {
-        padding: 3rem 1rem;
+    .lp-hero {
+        min-height: 78vh;
     }
 
-    .hero-title {
-        font-size: 2.5rem;
+    .lp-partners {
+        gap: 1.25rem;
     }
 
-    .hero-sub {
-        font-size: 1rem;
+    .lp-partner-chip {
+        min-width: 150px;
+        height: 84px;
+        padding: 0.9rem 1.4rem;
     }
+}
 
-    .section {
-        padding: 2rem 0;
-    }
-
-    .places-grid,
-    .events-grid,
-    .ads-row {
+@media (max-width: 560px) {
+    .lp-features-grid,
+    .lp-stats-grid {
         grid-template-columns: 1fr;
     }
-}
 
-/* ===== Small Mobile ===== */
-@media (max-width: 480px) {
-    .hero {
-        min-height: 45vh;
+    .lp-hero-content {
+        padding: 6rem 1rem 4.5rem;
     }
 
-    .hero-content {
-        padding: 2rem 0.75rem;
+    .lp-btn {
+        width: auto;
     }
 
-    .hero-title {
-        font-size: 1.8rem;
+    .lp-stat-card {
+        min-height: 0;
     }
 
-    .hero-sub {
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
+    .lp-stat-value {
+        margin-top: 1rem;
     }
 
-    .hero-actions {
-        flex-direction: column;
-        gap: 0.75rem;
+    .lp-cta {
+        padding: 3rem 1.1rem;
     }
 
-    .hero-actions .btn {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .section {
-        padding: 1.5rem 0;
-    }
-
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-
-    .section-title {
-        font-size: 1.3rem;
-    }
-
-    .place-img,
-    .event-img {
-        height: 160px;
-    }
-
-    .ad-img {
-        height: 140px;
-    }
-
-    .place-info,
-    .event-info,
-    .ad-info {
-        padding: 0.85rem 1rem;
+    .lp-h2-sm,
+    .lp-lead-tight {
+        text-align: center;
     }
 }
