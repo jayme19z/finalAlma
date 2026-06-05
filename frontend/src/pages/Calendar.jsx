@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getCalendarEvents, addCalendarEvent, removeCalendarEvent, getEvents, getEvent } from '../api/client'
 import { useLang } from '../i18n/translations'
 import { formatDateCIS } from '../utils/dateFormat'
+import { useAuth } from '../context/AuthContext'
 import './Calendar.css'
 
 function getDaysInMonth(year, month) {
@@ -16,6 +17,7 @@ function getFirstDayOfWeek(year, month) {
 
 export default function Calendar() {
     const { t, lang } = useLang()
+    const { user } = useAuth()
     const now = new Date()
     const [currentYear, setCurrentYear] = useState(now.getFullYear())
     const [currentMonth, setCurrentMonth] = useState(now.getMonth())
@@ -31,7 +33,18 @@ export default function Calendar() {
     const [loadingAvailable, setLoadingAvailable] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
 
+    // Action feedback state
+    const [actionLoading, setActionLoading] = useState(false)
+    const [toast, setToast] = useState(null) // { type: 'success'|'error', message }
+    const [confirmDelete, setConfirmDelete] = useState(null) // calendarEventId to confirm
+
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
+    // Show a toast notification
+    const showToast = useCallback((type, message) => {
+        setToast({ type, message })
+        setTimeout(() => setToast(null), 3000)
+    }, [])
 
     // Fetch user's calendar entries
     const fetchCalendar = useCallback(async () => {
@@ -53,7 +66,8 @@ export default function Calendar() {
                 })
             )
             setEnrichedEvents(enriched)
-        } catch {
+        } catch (err) {
+            console.error('Failed to load calendar:', err)
             setCalendarEntries([])
         } finally {
             setLoading(false)
@@ -113,16 +127,30 @@ export default function Calendar() {
         : null
     const selectedDayEvents = selectedDateStr ? (eventsByDate[selectedDateStr] || []) : []
 
-    // Delete event from calendar
+    // Delete event from calendar (with confirmation)
+    const requestDelete = (calendarEventId) => {
+        setConfirmDelete(calendarEventId)
+    }
+
     const handleDelete = async (calendarEventId) => {
+        setActionLoading(true)
+        setConfirmDelete(null)
         try {
             await removeCalendarEvent(calendarEventId)
+            showToast('success', t.calendar.deleteSuccess || 'Event removed from calendar')
             await fetchCalendar()
-        } catch { /* ignore */ }
+        } catch (err) {
+            console.error('Failed to delete calendar event:', err)
+            const msg = err.response?.data?.detail || t.calendar.deleteError || 'Failed to remove event'
+            showToast('error', msg)
+        } finally {
+            setActionLoading(false)
+        }
     }
 
     // Open add-event modal
     const openAddModal = async () => {
+        if (!user) return
         setShowAddModal(true)
         setLoadingAvailable(true)
         setSearchQuery('')
@@ -140,8 +168,10 @@ export default function Calendar() {
             // Filter out events already in calendar
             const calEventIds = new Set(calendarEntries.map((ce) => ce.event))
             setAvailableEvents(allEvents.filter((ev) => !calEventIds.has(ev.id)))
-        } catch {
+        } catch (err) {
+            console.error('Failed to load available events:', err)
             setAvailableEvents([])
+            showToast('error', t.calendar.loadError || 'Failed to load events')
         } finally {
             setLoadingAvailable(false)
         }
@@ -149,11 +179,21 @@ export default function Calendar() {
 
     // Add event to calendar
     const handleAddEvent = async (eventId) => {
+        setActionLoading(true)
         try {
             await addCalendarEvent({ event: eventId, status: 0 })
             setShowAddModal(false)
+            showToast('success', t.calendar.addSuccess || 'Event added to calendar!')
             await fetchCalendar()
-        } catch { /* ignore */ }
+        } catch (err) {
+            console.error('Failed to add calendar event:', err)
+            const msg = err.response?.status === 400
+                ? (t.calendar.alreadyAdded || 'This event is already in your calendar')
+                : (err.response?.data?.detail || t.calendar.addError || 'Failed to add event')
+            showToast('error', msg)
+        } finally {
+            setActionLoading(false)
+        }
     }
 
     const LANG_ID_MAP = { en: 0, ru: 1, kz: 2, tr: 3, zh: 4, hi: 5, ko: 6 }
@@ -256,7 +296,9 @@ export default function Calendar() {
                                                 </div>
                                                 <button
                                                     className="btn btn-sm btn-danger"
-                                                    onClick={() => handleDelete(ce.id)}
+                                                    onClick={() => requestDelete(ce.id)}
+                                                    disabled={actionLoading}
+                                                    title={t.calendar.deleteEvent || 'Remove'}
                                                 >
                                                     ✕
                                                 </button>
@@ -294,17 +336,48 @@ export default function Calendar() {
                                 <p className="no-results">{t.calendar.noAvailable || 'No events available'}</p>
                             ) : (
                                 filteredAvailable.map((ev) => (
-                                    <div key={ev.id} className="add-event-row" onClick={() => handleAddEvent(ev.id)}>
+                                    <div key={ev.id} className={`add-event-row ${actionLoading ? 'disabled' : ''}`} onClick={() => !actionLoading && handleAddEvent(ev.id)}>
                                         <div>
                                             <strong>{getName(ev)}</strong>
                                             <span className="add-event-date">{formatDateCIS(ev.date)}</span>
                                         </div>
-                                        <span className="add-btn-icon">+</span>
+                                        <span className="add-btn-icon">{actionLoading ? '…' : '+'}</span>
                                     </div>
                                 ))
                             )}
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Confirm Delete Modal */}
+            {confirmDelete && (
+                <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+                    <div className="modal-card confirm-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>{t.calendar.confirmDeleteTitle || 'Remove Event?'}</h2>
+                            <button className="modal-close" onClick={() => setConfirmDelete(null)}>✕</button>
+                        </div>
+                        <div className="modal-body">
+                            <p className="confirm-text">{t.calendar.confirmDeleteMsg || 'Are you sure you want to remove this event from your calendar?'}</p>
+                            <div className="confirm-actions">
+                                <button className="btn btn-secondary" onClick={() => setConfirmDelete(null)}>
+                                    {t.calendar.cancelBtn || 'Cancel'}
+                                </button>
+                                <button className="btn btn-danger" onClick={() => handleDelete(confirmDelete)} disabled={actionLoading}>
+                                    {actionLoading ? '…' : (t.calendar.deleteEvent || 'Remove')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Toast Notification */}
+            {toast && (
+                <div className={`calendar-toast ${toast.type} fade-in`}>
+                    <span className="calendar-toast-icon">{toast.type === 'success' ? '✓' : '✕'}</span>
+                    <span>{toast.message}</span>
                 </div>
             )}
         </div>
