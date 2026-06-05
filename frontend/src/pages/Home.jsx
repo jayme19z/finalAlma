@@ -53,12 +53,12 @@ export default function Home() {
     ]
 
     const features = [
-        { icon: Icon.pin, tone: 'blue', title: l.f1Title, desc: l.f1Desc, to: '/places' },
-        { icon: Icon.calendar, tone: 'violet', title: l.f2Title, desc: l.f2Desc, to: '/events' },
-        { icon: Icon.book, tone: 'red', title: l.f3Title, desc: l.f3Desc, to: '/info' },
-        { icon: Icon.translate, tone: 'green', title: l.f4Title, desc: l.f4Desc, to: '/translator' },
-        { icon: Icon.cloud, tone: 'sky', title: l.f5Title, desc: l.f5Desc, to: '/weather' },
-        { icon: Icon.calendarCheck, tone: 'pink', title: l.f6Title, desc: l.f6Desc, to: '/calendar' },
+        { icon: Icon.pin, tone: 'blue', title: l.f1Title, desc: l.f1Desc, to: '/places', image: '/media/images/homepage/city_guide.png' },
+        { icon: Icon.calendar, tone: 'violet', title: l.f2Title, desc: l.f2Desc, to: '/events', image: '/media/images/homepage/upcoming_events.png' },
+        { icon: Icon.book, tone: 'red', title: l.f3Title, desc: l.f3Desc, to: '/info', image: '/media/images/homepage/information_directory.png' },
+        { icon: Icon.translate, tone: 'green', title: l.f4Title, desc: l.f4Desc, to: '/translator', image: '/media/images/homepage/built-in_translator.png' },
+        { icon: Icon.cloud, tone: 'sky', title: l.f5Title, desc: l.f5Desc, to: '/weather', image: '/media/images/homepage/weather_forecast.png' },
+        { icon: Icon.calendarCheck, tone: 'pink', title: l.f6Title, desc: l.f6Desc, to: '/calendar', image: '/media/images/homepage/personal_calendar.png' },
     ]
 
     const partners = [
@@ -116,7 +116,7 @@ export default function Home() {
                         {features.map((f, i) => (
                             <Link to={f.to} className="lp-feature-card card fade-in" key={i} style={{ animationDelay: `${i * 0.06}s` }}>
                                 <div className={`lp-feature-media tone-${f.tone}`}>
-                                    <span className={`lp-icon-badge tone-${f.tone}`}>{f.icon}</span>
+                                    <img src={f.image} alt={f.title} className="lp-feature-img" />
                                 </div>
                                 <div className="lp-feature-body">
                                     <h3 className="lp-feature-title">{f.title}</h3>
