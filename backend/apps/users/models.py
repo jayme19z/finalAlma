@@ -1,14 +1,18 @@
+# Django modules
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
 class CustomUser(AbstractUser):
-    """Custom user model for Almatour."""
+    """Custom user model for Almatour.
+
+    Uses the email field as the primary username identifier.
+    """
 
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, unique=True)
 
-    # Remove fields we don't need from AbstractUser
+    # Exclude inherited name fields in favor of single username or profile details
     first_name = None
     last_name = None
 

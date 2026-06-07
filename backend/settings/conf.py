@@ -1,9 +1,7 @@
 # Project modules
 from decouple import config
 
-# ----------------------------------------------
-# Env id
-#
+# Env id settings
 ENV_POSSIBLE_OPTIONS = (
     "local",
     "prod",

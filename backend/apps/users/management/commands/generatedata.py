@@ -18,9 +18,7 @@ from apps.events.models import Event, EventTranslation, CalendarEvent
 NOW = timezone.now
 
 
-# ============================================================
-# ===================== НАЧАЛО =================
-# ============================================================
+# Seed data definitions
 
 USERS_DATA = [
     {
@@ -30,7 +28,7 @@ USERS_DATA = [
         "password": make_password("AdminStrongPass123"),
         "is_superuser": True,
         "username": "admin",
-        "is_active": True, #проставить везде True
+        "is_active": True,  # Set active state
     }
 ]
 
@@ -1770,7 +1768,7 @@ EVENTS_DATA = [
         "start_time": dtime(20, 0),
         "duration": 60,
         "artist": "Eric B. Turner (США) — Джаз и блюз из сердца Америки",
-        "cost": 8000,   # минимальная цена
+        "cost": 8000,   # Minimum price
         "currency": "KZT",
         "category": 1,
         "address": "Джаз-клуб EverJazz, ул. Гоголя, 40Б",
@@ -2169,7 +2167,7 @@ EVENT_TRANSLATIONS_DATA = [
 
 
 CALENDAR_EVENTS_DATA = [
-    {"id": 1, "user_id": 1, "event_id": 1, "status": 1}, # проставить везде 1
+    {"id": 1, "user_id": 1, "event_id": 1, "status": 1},  # Status active/planned
     {"id": 2, "user_id": 1, "event_id": 2, "status": 1},
     {"id": 3, "user_id": 1, "event_id": 3, "status": 1},
     {"id": 4, "user_id": 1, "event_id": 4, "status": 1},
@@ -2337,7 +2335,7 @@ ADVERTISEMENT_TRANSLATIONS_DATA = [
     {
         "id": 1,
         "advertisement_id": 1,
-        "language_id": 1,  # От 0 до 3
+        "language_id": 1,  # Language identifier (0 to 3)
         "name": "Winter Sale",
         "description": "Up to 50% discount",
     }
@@ -2368,9 +2366,7 @@ class Command(BaseCommand):
             )
         )
 
-    # ========================================================
-    # ===================== КОНЕЦ ======================
-    # ========================================================
+# Data loaders
 
     def load_users(self):
         for user in USERS_DATA:
@@ -2382,7 +2378,7 @@ class Command(BaseCommand):
                     "password": user["password"],
                     "is_superuser": bool(user["is_superuser"]),
                     "username": user["username"],
-                    # date_joined по схеме DEFAULT CURRENT_TIMESTAMP, но можно проставить явно:
+                    # Explicitly set date_joined matching database schema default:
                     "date_joined": NOW(),
                     "last_login": NOW(),
                     "is_active": bool(user["is_active"]),
@@ -2400,20 +2396,15 @@ class Command(BaseCommand):
                     "link": place["link"],
                     "lat": place["lat"],
                     "lng": place["lng"],
-                    # created_at по схеме DEFAULT CURRENT_TIMESTAMP — можно не трогать,
-                    # но при update лучше обновлять updated_at:
+                    # Update updated_at on change
                     "updated_at": NOW(),
-                    # deleted_at в новой схеме DATETIME NULL, НЕ 0:
+                    # Set deleted_at to None for active records
                     "deleted_at": None,
                 },
             )
 
     def load_place_translations(self):
-        """
-        Важно: в схеме UNIQUE(place_id, language_id)
-        Поэтому лучше искать по (place_id, language_id), а не по id,
-        чтобы не ловить дубли при изменении сидов.
-        """
+        """Look up by place_id and language_id to prevent duplicates on update."""
         for tr in PLACE_TRANSLATIONS_DATA:
             PlaceTranslation.objects.update_or_create(
                 place_id=tr["place_id"],
@@ -2446,9 +2437,7 @@ class Command(BaseCommand):
             )
 
     def load_event_translations(self):
-        """
-        UNIQUE(event_id, language_id) -> ищем по этим полям.
-        """
+        """Look up by event_id and language_id to prevent duplicates on update."""
         for tr in EVENT_TRANSLATIONS_DATA:
             EventTranslation.objects.update_or_create(
                 event_id=tr["event_id"],
@@ -2460,10 +2449,7 @@ class Command(BaseCommand):
             )
 
     def load_calendar_events(self):
-        """
-        В новой схеме нет поля date.
-        UNIQUE(user_id, event_id) -> ищем по (user_id, event_id).
-        """
+        """Look up by user_id and event_id in the absence of date field."""
         for item in CALENDAR_EVENTS_DATA:
             CalendarEvent.objects.update_or_create(
                 user_id=item["user_id"],
@@ -2509,9 +2495,7 @@ class Command(BaseCommand):
             )
 
     def load_advertisement_translations(self):
-        """
-        UNIQUE(advertisement_id, language_id) -> ищем по этим полям.
-        """
+        """Look up by advertisement_id and language_id."""
         for tr in ADVERTISEMENT_TRANSLATIONS_DATA:
             AdvertisementTranslation.objects.update_or_create(
                 advertisement_id=tr["advertisement_id"],

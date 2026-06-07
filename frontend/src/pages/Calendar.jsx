@@ -12,7 +12,7 @@ function getDaysInMonth(year, month) {
 
 function getFirstDayOfWeek(year, month) {
     const day = new Date(year, month, 1).getDay()
-    return day === 0 ? 6 : day - 1 // Monday=0
+    return day === 0 ? 6 : day - 1
 }
 
 export default function Calendar() {
@@ -27,33 +27,30 @@ export default function Calendar() {
     const [loading, setLoading] = useState(true)
     const detailPanelRef = useRef(null)
 
-    // Add-event modal state
+    // Modal state for adding events
     const [showAddModal, setShowAddModal] = useState(false)
     const [availableEvents, setAvailableEvents] = useState([])
     const [loadingAvailable, setLoadingAvailable] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
 
-    // Action feedback state
+    // Toast and confirmation dialog actions state
     const [actionLoading, setActionLoading] = useState(false)
-    const [toast, setToast] = useState(null) // { type: 'success'|'error', message }
-    const [confirmDelete, setConfirmDelete] = useState(null) // calendarEventId to confirm
+    const [toast, setToast] = useState(null)
+    const [confirmDelete, setConfirmDelete] = useState(null)
 
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 
-    // Show a toast notification
     const showToast = useCallback((type, message) => {
         setToast({ type, message })
         setTimeout(() => setToast(null), 3000)
     }, [])
 
-    // Fetch user's calendar entries
     const fetchCalendar = useCallback(async () => {
         try {
             const res = await getCalendarEvents()
             const items = res.data.results || res.data || []
             setCalendarEntries(items)
 
-            // Enrich each entry with event details
             const enriched = {}
             await Promise.all(
                 items.map(async (ce) => {
@@ -78,14 +75,14 @@ export default function Calendar() {
         fetchCalendar()
     }, [fetchCalendar])
 
-    // Scroll to details on mobile when day selected
+    // Scroll to the active details pane on mobile when selecting a day
     useEffect(() => {
         if (selectedDay && window.innerWidth <= 768 && detailPanelRef.current) {
             detailPanelRef.current.scrollIntoView({ behavior: 'smooth' })
         }
     }, [selectedDay])
 
-    // Navigation
+    /** Navigates to the previous calendar month. */
     const prevMonth = () => {
         if (currentMonth === 0) {
             setCurrentMonth(11)
@@ -96,6 +93,7 @@ export default function Calendar() {
         setSelectedDay(null)
     }
 
+    /** Navigates to the next calendar month. */
     const nextMonth = () => {
         if (currentMonth === 11) {
             setCurrentMonth(0)
@@ -106,6 +104,7 @@ export default function Calendar() {
         setSelectedDay(null)
     }
 
+    /** Jumps the view straight to today's active date. */
     const goToday = () => {
         setCurrentYear(now.getFullYear())
         setCurrentMonth(now.getMonth())
@@ -127,11 +126,18 @@ export default function Calendar() {
         : null
     const selectedDayEvents = selectedDateStr ? (eventsByDate[selectedDateStr] || []) : []
 
-    // Delete event from calendar (with confirmation)
+    /**
+     * Triggers a confirmation dialog to delete a calendar entry.
+     * @param {number|string} calendarEventId - Calendar event ID to target.
+     */
     const requestDelete = (calendarEventId) => {
         setConfirmDelete(calendarEventId)
     }
 
+    /**
+     * Executes the calendar delete API call.
+     * @param {number|string} calendarEventId - Calendar event ID to remove.
+     */
     const handleDelete = async (calendarEventId) => {
         setActionLoading(true)
         setConfirmDelete(null)
@@ -148,7 +154,9 @@ export default function Calendar() {
         }
     }
 
-    // Open add-event modal
+    /**
+     * Opens the add-event modal dialog and fetches events.
+     */
     const openAddModal = async () => {
         if (!user) return
         setShowAddModal(true)
@@ -165,7 +173,6 @@ export default function Calendar() {
                 hasMore = allEvents.length < (res.data.count || 0)
                 page++
             }
-            // Filter out events already in calendar
             const calEventIds = new Set(calendarEntries.map((ce) => ce.event))
             setAvailableEvents(allEvents.filter((ev) => !calEventIds.has(ev.id)))
         } catch (err) {
@@ -177,7 +184,10 @@ export default function Calendar() {
         }
     }
 
-    // Add event to calendar
+    /**
+     * Adds a specific event to the user's calendar.
+     * @param {number|string} eventId - Target Event ID.
+     */
     const handleAddEvent = async (eventId) => {
         setActionLoading(true)
         try {
@@ -197,6 +207,12 @@ export default function Calendar() {
     }
 
     const LANG_ID_MAP = { en: 0, ru: 1, kz: 2, tr: 3, zh: 4, hi: 5, ko: 6 }
+
+    /**
+     * Retrieves the localized name of an event based on current settings.
+     * @param {Object} item - Event object.
+     * @returns {string} The localized event title.
+     */
     const getName = (item) => {
         const langId = LANG_ID_MAP[lang] ?? 0
         const tr = item?.translations?.find(x => x.language_id === langId) || item?.translations?.[0]
@@ -314,7 +330,6 @@ export default function Calendar() {
                 </div>
             </div>
 
-            {/* Add Event Modal */}
             {showAddModal && (
                 <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
                     <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -350,7 +365,6 @@ export default function Calendar() {
                 </div>
             )}
 
-            {/* Confirm Delete Modal */}
             {confirmDelete && (
                 <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
                     <div className="modal-card confirm-modal" onClick={(e) => e.stopPropagation()}>
@@ -373,7 +387,6 @@ export default function Calendar() {
                 </div>
             )}
 
-            {/* Toast Notification */}
             {toast && (
                 <div className={`calendar-toast ${toast.type} fade-in`}>
                     <span className="calendar-toast-icon">{toast.type === 'success' ? '✓' : '✕'}</span>

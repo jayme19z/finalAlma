@@ -3,7 +3,6 @@ import { useLang } from '../i18n/translations'
 import { useAuth } from '../context/AuthContext'
 import './Home.css'
 
-/* ── Inline icons (stroke style, matches the project's lightweight look) ── */
 const Icon = {
     star: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
@@ -42,7 +41,7 @@ export default function Home() {
     const { user } = useAuth()
     const l = t.home.landing
 
-    // Signed in -> go to maps; not signed in -> sign in first (then the app).
+    // Redirect to places map if authenticated, otherwise request login/register
     const startTo = user ? '/places' : '/login'
 
     const stats = [
@@ -69,7 +68,7 @@ export default function Home() {
 
     return (
         <div className="home">
-            {/* ── Hero ── */}
+            {/* Hero Section */}
             <section className="lp-hero">
                 <div className="lp-hero-bg" />
                 <div className="lp-hero-overlay" />
@@ -85,7 +84,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ── Stats ── */}
+            {/* Statistics Section */}
             <section className="lp-section lp-section-alt">
                 <div className="container">
                     <h2 className="lp-h2">
@@ -105,7 +104,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ── Features ── */}
+            {/* Core Features Grid */}
             <section className="lp-section">
                 <div className="container">
                     <h2 className="lp-h2 lp-h2-center">
@@ -128,7 +127,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ── Partners ── */}
+            {/* Partners Integrations */}
             <section className="lp-section lp-section-alt">
                 <div className="container">
                     <h2 className="lp-h2 lp-h2-sm">{l.partnersTitle}</h2>
@@ -149,7 +148,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ── CTA ── */}
+            {/* Call to Action Section */}
             <section className="lp-section">
                 <div className="container">
                     <div className="lp-cta">

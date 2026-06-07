@@ -1,10 +1,3 @@
-/**
- * Build a safe image URL from whatever the API returns.
- * - Full URLs (http/https) are used as-is.
- * - Relative paths (e.g. "images/info/apps/onay.jpg") are prefixed with /media/.
- * - Null/empty values return the fallback placeholder.
- */
-
 const FALLBACK =
     'data:image/svg+xml,' +
     encodeURIComponent(

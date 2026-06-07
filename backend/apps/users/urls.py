@@ -8,8 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 from apps.users.views import RegisterView, ProfileView, SubscribeView
 
 
-# Wrap SimpleJWT views with schema annotations so they appear under
-# the "Authentication" tag with clear descriptions.
+# Decorated SimpleJWT views to integrate with the Authentication OpenAPI tag.
 DecoratedTokenObtainPairView = extend_schema(
     tags=['Authentication'],
     summary='Obtain JWT token pair',

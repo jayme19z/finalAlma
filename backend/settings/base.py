@@ -1,22 +1,20 @@
 # Python modules
+import os
+
+# Django modules
+from django.conf import settings
 
 import os
 
-# Project modules
 from settings.conf import *
 
-
-# ----------------------------------------------
-# Path
-#
+# Path settings
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_URLCONF = "settings.urls"
 WSGI_APPLICATION = "settings.wsgi.application"
 ASGI_APPLICATION = "settings.asgi.application"
 
-# ----------------------------------------------
-# Apps
-#
+# Application definitions
 DJANGO_AND_THIRD_PARTY_APPS = [
     "unfold",
 
@@ -48,9 +46,7 @@ PROJECT_APPS = [
 
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 
-# ----------------------------------------------
-# Middleware | Templates | Validators
-#
+# Middleware, templates, and password validators
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -85,17 +81,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ----------------------------------------------
-# Internationalization
-#
+# Internationalization settings
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# ----------------------------------------------
-# Static | Media
-#
+# Static and Media files settings
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = "/media/"
@@ -105,9 +97,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-# ----------------------------------------------
-# Unfold
-#
+# Unfold Admin configuration
 UNFOLD = {
     "SITE_HEADER": "Almatour",
     "SITE_TITLE": "Almatour",
@@ -154,9 +144,7 @@ UNFOLD = {
     },
 }
 
-# ----------------------------------------------
-# Rest Framework
-#
+# Django REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
@@ -172,9 +160,7 @@ REST_FRAMEWORK = {
     },
 }
 
-# ----------------------------------------------
-# CORS
-#
+# CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",

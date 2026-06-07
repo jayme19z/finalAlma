@@ -25,13 +25,13 @@ export default function Navbar() {
 
     const isActive = (path) => location.pathname === path ? 'nav-link active' : 'nav-link'
 
-    // Close menu on route change
+    // Reset visibility states when the active route changes
     useEffect(() => {
         setMenuOpen(false)
         setDropdownOpen(false)
     }, [location.pathname])
 
-    // Close dropdown on click outside
+    // Dismiss language selection dropdown on click outside
     useEffect(() => {
         if (!dropdownOpen) return
         const handleOutsideClick = () => setDropdownOpen(false)
@@ -39,7 +39,7 @@ export default function Navbar() {
         return () => window.removeEventListener('click', handleOutsideClick)
     }, [dropdownOpen])
 
-    // Prevent body scroll when menu open
+    // Adjust document body scroll when mobile menu drawer is open
     useEffect(() => {
         if (menuOpen) {
             document.body.style.overflow = 'hidden'
@@ -54,7 +54,6 @@ export default function Navbar() {
             <div className="nav-container">
                 <Link to="/" className="nav-brand">
                     <img src="/Logo.png" alt="Almatour" className="brand-icon-img" />
-
                 </Link>
 
                 {user && (
@@ -98,13 +97,13 @@ export default function Navbar() {
                             </ul>
                         )}
                     </div>
+
                     {user ? (
                         <Link to="/profile" className="nav-profile-btn nav-profile-desktop">{t.nav.profile}</Link>
                     ) : (
                         <Link to="/login" className="nav-login-btn nav-login-desktop">{t.nav.login}</Link>
                     )}
 
-                    {/* Hamburger button — visible only on mobile */}
                     <button
                         className="hamburger"
                         onClick={() => setMenuOpen(!menuOpen)}
@@ -118,7 +117,6 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile menu overlay */}
             <div className={`mobile-menu ${menuOpen ? 'mobile-menu--open' : ''}`}>
                 <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)} />
                 <div className="mobile-menu-panel">
